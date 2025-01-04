@@ -1,0 +1,5 @@
+/* Winner button style */
+.winner-button.selected {
+    background-color: #28a745; /* Green for selection */
+    color: white;
+}
