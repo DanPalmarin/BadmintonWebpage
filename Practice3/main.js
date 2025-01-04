@@ -165,6 +165,7 @@ function generateDraw(players, tableBodyId, isRestore = false) {
             
             // MEMORY UPDATE
             boysMemory[index+1][player1] = true;
+            boysMemory[index+1][player2] = false;
         });
 
         player2Button.addEventListener("click", () => {
@@ -175,6 +176,7 @@ function generateDraw(players, tableBodyId, isRestore = false) {
 
             // MEMORY UPDATE
             boysMemory[index+1][player2] = true;
+            boysMemory[index+1][player1] = false;
         });
 
         // --- Scores cell (6 entry boxes) ---
