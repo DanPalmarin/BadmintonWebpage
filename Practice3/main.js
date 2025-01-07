@@ -280,6 +280,30 @@ reset.addEventListener("click", () => {
     localStorage.clear();
 })
 
+// --- Tab Buttons ---
+// Return arrays of tabButton objects and their contents
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const targetTab = button.dataset.tab;
+
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+
+        // Hide all tab contents
+        tabContents.forEach(content => content.classList.add('hidden'));
+
+        // Activate the clicked button and show the corresponding tab content
+        button.classList.add('active');
+        document.getElementById(targetTab).classList.remove('hidden');
+    });
+});
+
+// Set default tab to Attendance
+document.querySelector('.tab-button[data-tab="attendance"]').click();
+
 // Save data when the page is unloaded
 window.addEventListener("beforeunload", saveBoysMemory);
 
