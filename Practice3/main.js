@@ -281,10 +281,14 @@ document.querySelectorAll('#roster td').forEach(cell => {
 });
 
 // Make Boys Draw button
-document.querySelectorAll('#roster tbody tr').forEach(row => {
-    const boy = row.children[0];
-    boyPlayers.push(cell.textContent.trim());
+boysDrawButton.addEventListener("click", () => {
+    document.querySelectorAll('#roster tbody tr').forEach(row => {
+        const boy = row.children[0];
+        boyPlayers.push(boy.textContent.trim());
+        generateDraw(boyPlayers, "boysdraw");
+    });
 });
+
 
 // Remove Selected Player(s) button
 removeButton.addEventListener("click", () => {
