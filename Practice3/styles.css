@@ -1,5 +1,19 @@
+/* Attendance table style*/
+#roster td:hover {
+    background-color: #ddd;
+  }
+
+#roster td {
+    cursor: pointer;
+}
+
+.roster-cell-selected {
+    background-color: lightgray;
+}
+
 /* Winner button style */
 .winner-button.selected {
-    background-color: #28a745; /* Green for selection */
+    background-color: #28a745;
     color: white;
 }
+

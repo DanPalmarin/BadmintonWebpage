@@ -252,7 +252,7 @@ function restoreDrawFromLocalStorage(tableBodyId) {
     if (savedData !== "{}") {
         boysMemory = JSON.parse(savedData);
         // Generate the draw based on boysMemory and global boyPlayers
-        generateDraw(boyPlayers2, tableBodyId, Boolean(savedData));
+        generateDraw(boyPlayers, tableBodyId, Boolean(savedData));
     }
 }
 
@@ -260,8 +260,8 @@ function restoreDrawFromLocalStorage(tableBodyId) {
 // --- Global variables ---
 // This will store all boys draw data
 let boysMemory = {};
-const boyPlayers1 = ["Joe", "Frank", "Dan", "Sam"];
-const boyPlayers2 = ["Joe", "Frank", "Dan", "Sam", "Steve", "Abe"];
+//const boyPlayers1 = ["Joe", "Frank", "Dan", "Sam"];
+const boyPlayers = [];
 
 // --- Static event listeners ---
 option1.addEventListener("click", () => {
@@ -273,12 +273,47 @@ option2.addEventListener("click", () => {
     
 });
 
-reset.addEventListener("click", () => {
+// Making the attendance table clickable
+document.querySelectorAll('#roster td').forEach(cell => {
+    cell.addEventListener('click', () => {
+        cell.classList.toggle('roster-cell-selected');
+    });
+});
+
+// Make Boys Draw button
+document.querySelectorAll('#roster tbody tr').forEach(row => {
+    const boy = row.children[0];
+    boyPlayers.push(cell.textContent.trim());
+});
+
+// Remove Selected Player(s) button
+removeButton.addEventListener("click", () => {
+    // Loop through each cell and remove the text content if it's highlighted
+    document.querySelectorAll('#roster tbody td').forEach(cell => {
+        if (cell.classList.contains('roster-cell-selected')) {
+            cell.textContent = '';
+            cell.classList.remove('roster-cell-selected');
+        }
+    });
+
+    // Check if any row is empty and remove it
+    document.querySelectorAll('#roster tbody tr').forEach(row => {
+        const [cell1, cell2] = row.children;
+        if (cell1.textContent.trim() === '' && cell2.textContent.trim() === '') {
+            row.remove();
+        }
+    });
+    
+});
+
+// Reset button
+resetButton.addEventListener("click", () => {
     boysMemory = {};
     const boysTable = document.getElementById("boysdraw");
     boysTable.innerHTML='';
     localStorage.clear();
-})
+});
+
 
 // --- Tab Buttons ---
 // Return arrays of tabButton objects and their contents
