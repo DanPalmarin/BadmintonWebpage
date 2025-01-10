@@ -243,16 +243,25 @@ function generateDraw(players, tableBodyId, isRestore = false) {
 function saveBoysMemory() {
     console.log(boysMemory);
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
+    localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
+    //localStorage.setItem("girlPlayers", JSON.stringify(boyPlayers));
 }
 
 // Load boys draw table and fill values from boysMemory
 function restoreDrawFromLocalStorage(tableBodyId) {
-    const savedData = localStorage.getItem("boysMemory");
-    console.log(savedData);
-    if (savedData !== "{}") {
-        boysMemory = JSON.parse(savedData);
-        // Generate the draw based on boysMemory and global boyPlayers
-        generateDraw(boyPlayers, tableBodyId, Boolean(savedData));
+    const savedMemory = localStorage.getItem("boysMemory");
+    const savedBoys = localStorage.getItem("boyPlayers");
+    //const savedGirls = localStorage.getItem("girlPlayers");
+
+    console.log(savedBoys);
+    if (savedMemory !== "{}") {
+        boysMemory = JSON.parse(savedMemory);
+        boyPlayers = JSON.parse(savedBoys);
+        //girlPlayers = JSON.parse(savedGirls);
+
+        // Generate the draws
+        generateDraw(boyPlayers, tableBodyId, Boolean(savedMemory));
+        //generateDraw(girlPlayers, tableBodyId, Boolean(savedMemory));
     }
 }
 
@@ -260,8 +269,10 @@ function restoreDrawFromLocalStorage(tableBodyId) {
 // --- Global variables ---
 // This will store all boys draw data
 let boysMemory = {};
-//const boyPlayers1 = ["Joe", "Frank", "Dan", "Sam"];
-const boyPlayers = [];
+const boyPlayers1 = ["Joe", "Frank", "Dan", "Sam"];
+let boyPlayers = [];
+let girlPlayers = [];
+
 
 // --- Static event listeners ---
 option1.addEventListener("click", () => {
@@ -282,13 +293,33 @@ document.querySelectorAll('#roster td').forEach(cell => {
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
+    // Clear the previous list of players
+    boyPlayers = []; // Clear the array to avoid duplicates
+
     document.querySelectorAll('#roster tbody tr').forEach(row => {
         const boy = row.children[0];
         boyPlayers.push(boy.textContent.trim());
-        generateDraw(boyPlayers, "boysdraw");
+        
     });
+    console.log(boyPlayers);
+    generateDraw(boyPlayers, "boysdraw");
+    saveBoysMemory(); // Save to localStorage
 });
 
+// Make Girls Draw button
+girlsDrawButton.addEventListener("click", () => {
+    // Clear the previous list of players
+    girlPlayers = []; // Clear the array to avoid duplicates
+
+    document.querySelectorAll('#roster tbody tr').forEach(row => {
+        const girl = row.children[1];
+        girlPlayers.push(girl.textContent.trim());
+        
+    });
+    console.log(girlPlayers);
+    generateDraw(girlPlayers, "girlsdraw");
+    //saveBoysMemory(); // Save to localStorage
+});
 
 // Remove Selected Player(s) button
 removeButton.addEventListener("click", () => {
