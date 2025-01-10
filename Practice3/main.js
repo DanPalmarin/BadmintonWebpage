@@ -1,6 +1,9 @@
 import { makeDraw } from './masterDraws.js';
 
-function generateDraw(players, tableBodyId, isRestore = false) {
+function generateDraw(players, tableBodyId, drawType, isRestore = false) {
+    // Select memory based on drawType
+    let memory = drawType === "boys" ? boysMemory : girlsMemory;
+
     // Build the draw from the masterDraw module
     const games = makeDraw(players);
 
@@ -12,12 +15,12 @@ function generateDraw(players, tableBodyId, isRestore = false) {
     // INITIALIZE MEMORY
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
-        boysMemory = {};  // Only clear boysMemory if not restoring
+        memory = {};  // Only clear boysMemory if not restoring
         console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
-    // This is different than boysMemory, which is used when the page is refreshed or the browser is closed
+    // This is different than memory, which is used when the page is refreshed or the browser is closed
 
     const rows = tableBody.querySelectorAll("tr");
 
@@ -60,10 +63,10 @@ function generateDraw(players, tableBodyId, isRestore = false) {
         });
 
         // MEMORY UPDATE
-        // Rebuild boysMemory to match the new draw
+        // Rebuild memory to match the new draw
         games.forEach((pair, index) => {
             const [player1, player2] = pair;
-            boysMemory[index + 1] = {
+            memory[index + 1] = {
                 [player1]: false,
                 [player2]: false,
                 Game1: [null, null],
@@ -78,29 +81,26 @@ function generateDraw(players, tableBodyId, isRestore = false) {
 
                 if ((existingPlayer1 === player1 && existingPlayer2 === player2) ||
                     (existingPlayer1 === player2 && existingPlayer2 === player1)) {
-                    boysMemory[index + 1][player1] = existingData[game][existingPlayer1];
-                    boysMemory[index + 1][player2] = existingData[game][existingPlayer2];
-                    boysMemory[index + 1].Game1 = existingData[game].Game1;
-                    boysMemory[index + 1].Game2 = existingData[game].Game2;
-                    boysMemory[index + 1].Game3 = existingData[game].Game3;
+                    memory[index + 1][player1] = existingData[game][existingPlayer1];
+                    memory[index + 1][player2] = existingData[game][existingPlayer2];
+                    memory[index + 1].Game1 = existingData[game].Game1;
+                    memory[index + 1].Game2 = existingData[game].Game2;
+                    memory[index + 1].Game3 = existingData[game].Game3;
                 }
             }
         });
     } else {
-        // If it's being restored, populate `existingData` from boysMemory
-        for (const game in boysMemory) {
-            const [player1, player2] = Object.keys(boysMemory[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3');
+        // If it's being restored, populate `existingData` from memory
+        for (const game in memory) {
+            const [player1, player2] = Object.keys(memory[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3');
             existingData[game] = {
-                [player1]: boysMemory[game][player1],
-                [player2]: boysMemory[game][player2],
-                Game1: boysMemory[game].Game1,
-                Game2: boysMemory[game].Game2,
-                Game3: boysMemory[game].Game3,
+                [player1]: memory[game][player1],
+                [player2]: memory[game][player2],
+                Game1: memory[game].Game1,
+                Game2: memory[game].Game2,
+                Game3: memory[game].Game3,
             };
         }
-
-        //boysMemory = {};
-        console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -164,8 +164,8 @@ function generateDraw(players, tableBodyId, isRestore = false) {
             player2Button.classList.remove("selected");
             
             // MEMORY UPDATE
-            boysMemory[index+1][player1] = true;
-            boysMemory[index+1][player2] = false;
+            memory[index+1][player1] = true;
+            memory[index+1][player2] = false;
         });
 
         player2Button.addEventListener("click", () => {
@@ -175,8 +175,8 @@ function generateDraw(players, tableBodyId, isRestore = false) {
             player1Button.classList.remove("selected");
 
             // MEMORY UPDATE
-            boysMemory[index+1][player2] = true;
-            boysMemory[index+1][player1] = false;
+            memory[index+1][player2] = true;
+            memory[index+1][player1] = false;
         });
 
         // --- Scores cell (6 entry boxes) ---
@@ -206,12 +206,12 @@ function generateDraw(players, tableBodyId, isRestore = false) {
 
             // MEMORY UPDATE
             scoreInput1.addEventListener('input', () => {
-                boysMemory[index+1][`Game${i}`][0] = scoreInput1.value;
+                memory[index+1][`Game${i}`][0] = scoreInput1.value;
             });
 
             // MEMORY UPDATE
             scoreInput2.addEventListener('input', () => {
-                boysMemory[index+1][`Game${i}`][1] = scoreInput2.value;
+                memory[index+1][`Game${i}`][1] = scoreInput2.value;
             });
 
             scoreRow.appendChild(scoreInput1);
@@ -236,37 +236,47 @@ function generateDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    console.log(boysMemory);
+    console.log(memory);
 }
 
 // Save memory to LocalStorage
 function saveMemory() {
-    console.log(boysMemory);
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
-    localStorage.setItem("girlsMemory", JSON.stringify(boysMemory));
+    localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
-    localStorage.setItem("girlPlayers", JSON.stringify(boyPlayers));
+    localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
 }
 
 
 // Load boys draw table and fill values from boysMemory
-function restoreDrawFromLocalStorage(tableBodyId) {
+function restoreBoysDrawFromLocalStorage(tableBodyId) {
     const savedMemory = localStorage.getItem("boysMemory");
     const savedBoys = localStorage.getItem("boyPlayers");
-    //const savedGirls = localStorage.getItem("girlPlayers");
 
     console.log(savedBoys);
     if (savedMemory !== "{}") {
         boysMemory = JSON.parse(savedMemory);
         boyPlayers = JSON.parse(savedBoys);
-        //girlPlayers = JSON.parse(savedGirls);
 
-        // Generate the draws
-        generateDraw(boyPlayers, tableBodyId, Boolean(savedMemory));
-        //generateDraw(girlPlayers, tableBodyId, Boolean(savedMemory));
+        // Generate the boys draws
+        generateDraw(boyPlayers, tableBodyId, "boys", Boolean(savedMemory));
     }
 }
 
+// Load girls draw table and fill values from girlsMemory
+function restoreGirlsDrawFromLocalStorage(tableBodyId) {
+    const savedMemory = localStorage.getItem("girlsMemory");
+    const savedGirls = localStorage.getItem("girlPlayers");
+
+    console.log(savedGirls);
+    if (savedMemory !== "{}") {
+        girlsMemory = JSON.parse(savedMemory);
+        girlPlayers = JSON.parse(savedGirls);
+
+        // Generate the girls draws
+        generateDraw(girlPlayers, tableBodyId, "girls", Boolean(savedMemory));
+    }
+}
 
 // --- Global variables ---
 // This will store all boys draw data
@@ -295,7 +305,7 @@ boysDrawButton.addEventListener("click", () => {
         
     });
     console.log(boyPlayers);
-    generateDraw(boyPlayers, "boysdraw");
+    generateDraw(boyPlayers, "boysdraw", "boys");
     saveMemory(); // Save to localStorage
 });
 
@@ -310,7 +320,7 @@ girlsDrawButton.addEventListener("click", () => {
         
     });
     console.log(girlPlayers);
-    generateDraw(girlPlayers, "girlsdraw");
+    generateDraw(girlPlayers, "girlsdraw", "girls");
     saveMemory(); // Save to localStorage
 });
 
@@ -371,6 +381,6 @@ document.querySelector('.tab-button[data-tab="attendance"]').click();
 window.addEventListener("beforeunload", saveMemory);
 
 // Restore data when the page is loaded
-window.addEventListener("load", () => restoreDrawFromLocalStorage("boysdraw"));
-
+window.addEventListener("load", () => restoreBoysDrawFromLocalStorage("boysdraw"));
+window.addEventListener("load", () => restoreGirlsDrawFromLocalStorage("girlsdraw"));
 
