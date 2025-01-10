@@ -239,13 +239,15 @@ function generateDraw(players, tableBodyId, isRestore = false) {
     console.log(boysMemory);
 }
 
-// Save boysMemory to LocalStorage
-function saveBoysMemory() {
+// Save memory to LocalStorage
+function saveMemory() {
     console.log(boysMemory);
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
+    localStorage.setItem("girlsMemory", JSON.stringify(boysMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
-    //localStorage.setItem("girlPlayers", JSON.stringify(boyPlayers));
+    localStorage.setItem("girlPlayers", JSON.stringify(boyPlayers));
 }
+
 
 // Load boys draw table and fill values from boysMemory
 function restoreDrawFromLocalStorage(tableBodyId) {
@@ -269,21 +271,12 @@ function restoreDrawFromLocalStorage(tableBodyId) {
 // --- Global variables ---
 // This will store all boys draw data
 let boysMemory = {};
-const boyPlayers1 = ["Joe", "Frank", "Dan", "Sam"];
+let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
 
 
 // --- Static event listeners ---
-option1.addEventListener("click", () => {
-    generateDraw(boyPlayers1, "boysdraw");
-});
-
-option2.addEventListener("click", () => {
-    generateDraw(boyPlayers2, "boysdraw");
-    
-});
-
 // Making the attendance table clickable
 document.querySelectorAll('#roster td').forEach(cell => {
     cell.addEventListener('click', () => {
@@ -303,7 +296,7 @@ boysDrawButton.addEventListener("click", () => {
     });
     console.log(boyPlayers);
     generateDraw(boyPlayers, "boysdraw");
-    saveBoysMemory(); // Save to localStorage
+    saveMemory(); // Save to localStorage
 });
 
 // Make Girls Draw button
@@ -318,7 +311,7 @@ girlsDrawButton.addEventListener("click", () => {
     });
     console.log(girlPlayers);
     generateDraw(girlPlayers, "girlsdraw");
-    //saveBoysMemory(); // Save to localStorage
+    saveMemory(); // Save to localStorage
 });
 
 // Remove Selected Player(s) button
@@ -375,7 +368,7 @@ tabButtons.forEach(button => {
 document.querySelector('.tab-button[data-tab="attendance"]').click();
 
 // Save data when the page is unloaded
-window.addEventListener("beforeunload", saveBoysMemory);
+window.addEventListener("beforeunload", saveMemory);
 
 // Restore data when the page is loaded
 window.addEventListener("load", () => restoreDrawFromLocalStorage("boysdraw"));
