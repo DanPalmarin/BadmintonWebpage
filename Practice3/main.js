@@ -13,7 +13,6 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         boysMemory = {};  // Only clear boysMemory if not restoring
-        console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -98,9 +97,6 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                 Game3: boysMemory[game].Game3,
             };
         }
-
-        //boysMemory = {};
-        console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -236,7 +232,6 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    console.log(boysMemory);
 }
 
 function generateGirlsDraw(players, tableBodyId, isRestore = false) {
@@ -252,7 +247,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         girlsMemory = {};  // Only clear girlsMemory if not restoring
-        console.log("1. Memory cleared!");
+        //console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -339,7 +334,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         }
 
         //girlsMemory = {};
-        console.log("2. Memory cleared!");
+        //console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -475,12 +470,12 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    console.log(girlsMemory);
+    //console.log(girlsMemory);
 }
 
 // Save memory to LocalStorage
 function saveMemory() {
-    console.log(boysMemory);
+    localStorage.setItem("attendanceData", JSON.stringify(attendanceData));
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
     localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
@@ -490,12 +485,45 @@ function saveMemory() {
 
 // Load boys and girls draw table and fill values from boysMemory and girlsMemory
 function restoreDrawFromLocalStorage() {
+    const savedAttendanceData = localStorage.getItem("attendanceData");
     const savedBoysMemory = localStorage.getItem("boysMemory");
     const savedGirlsMemory = localStorage.getItem("girlsMemory");
     const savedBoys = localStorage.getItem("boyPlayers");
     const savedGirls = localStorage.getItem("girlPlayers");
 
-    console.log(savedBoys);
+    // Populate attendance with attendanceData
+    attendanceData = JSON.parse(savedAttendanceData);
+    const boys = attendanceData['Boys'];
+    const girls = attendanceData['Girls'];
+    const attendanceTable = document.querySelector('#roster tbody');
+    attendanceTable.innerHTML = '';
+
+    for (let i = 0; i < Math.max(boys.length, girls.length); i++) {
+        const row = document.createElement('tr');
+
+        const boyCell = document.createElement('td');
+        boyCell.textContent = boys[i] || ''; // Empty if no name
+
+        const girlCell = document.createElement('td');
+        girlCell.textContent = girls[i] || ''; // Empty if no name
+
+        // Re-add clickable feature
+        boyCell.addEventListener('click', () => {
+            boyCell.classList.toggle('roster-cell-selected');
+        });
+
+        // Re-add clickable feature
+        girlCell.addEventListener('click', () => {
+            girlCell.classList.toggle('roster-cell-selected');
+        });
+
+        row.appendChild(boyCell);
+        row.appendChild(girlCell);
+
+        attendanceTable.appendChild(row);
+    }
+
+    // Remake boys draw
     if (savedBoysMemory !== "{}") {
         boysMemory = JSON.parse(savedBoysMemory);
         boyPlayers = JSON.parse(savedBoys);
@@ -504,7 +532,7 @@ function restoreDrawFromLocalStorage() {
         generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
     }
 
-    console.log(savedGirls);
+    // Remake girls draw
     if (savedGirlsMemory !== "{}") {
         girlsMemory = JSON.parse(savedGirlsMemory);
         girlPlayers = JSON.parse(savedGirls);
@@ -520,7 +548,21 @@ let boysMemory = {};
 let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
+let attendanceData = {
+    'Boys' : [],
+    'Girls' : []
+};
 
+
+// Update attendanceData on startup (if there are preset players)
+document.querySelectorAll('#roster tbody tr').forEach(row => {
+    const boy = row.children[0].textContent.trim();
+    const girl = row.children[1].textContent.trim();
+    attendanceData['Boys'].push(boy);
+    attendanceData['Girls'].push(girl);
+});
+
+saveMemory(); // Update localStorage
 
 // --- Static event listeners ---
 // Making the attendance table clickable
@@ -536,11 +578,12 @@ boysDrawButton.addEventListener("click", () => {
     boyPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const boy = row.children[0];
-        boyPlayers.push(boy.textContent.trim());
-        
+        const boy = row.children[0].textContent.trim();
+        if (boy !== '') {
+            boyPlayers.push(boy);
+        }
     });
-    console.log(boyPlayers);
+    //console.log(boyPlayers);
     generateBoysDraw(boyPlayers, "boysdraw");
     saveMemory(); // Save to localStorage
 });
@@ -551,11 +594,12 @@ girlsDrawButton.addEventListener("click", () => {
     girlPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const girl = row.children[1];
-        girlPlayers.push(girl.textContent.trim());
-        
+        const girl = row.children[1].textContent.trim();
+        if (girl !== '') {
+            girlPlayers.push(girl);
+        }
     });
-    console.log(girlPlayers);
+    //console.log(girlPlayers);
     generateGirlsDraw(girlPlayers, "girlsdraw");
     saveMemory(); // Save to localStorage
 });
