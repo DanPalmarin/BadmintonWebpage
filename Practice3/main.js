@@ -13,6 +13,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         boysMemory = {};  // Only clear boysMemory if not restoring
+        console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -97,6 +98,9 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                 Game3: boysMemory[game].Game3,
             };
         }
+
+        //boysMemory = {};
+        console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -232,6 +236,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
+    console.log(boysMemory);
 }
 
 function generateGirlsDraw(players, tableBodyId, isRestore = false) {
@@ -247,7 +252,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         girlsMemory = {};  // Only clear girlsMemory if not restoring
-        //console.log("1. Memory cleared!");
+        console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -334,7 +339,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         }
 
         //girlsMemory = {};
-        //console.log("2. Memory cleared!");
+        console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -470,44 +475,27 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    //console.log(girlsMemory);
+    console.log(girlsMemory);
 }
 
 // Save memory to LocalStorage
 function saveMemory() {
-    localStorage.setItem("attendanceData", JSON.stringify(attendanceData));
+    console.log(boysMemory);
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
     localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
-
-    // Log localStorage to verify the data is saved
-    console.log("Saved to localStorage: ", localStorage);
 }
 
 
 // Load boys and girls draw table and fill values from boysMemory and girlsMemory
 function restoreDrawFromLocalStorage() {
-    console.log("Restore function is being called");
-    const savedAttendanceData = localStorage.getItem("attendanceData");
     const savedBoysMemory = localStorage.getItem("boysMemory");
     const savedGirlsMemory = localStorage.getItem("girlsMemory");
     const savedBoys = localStorage.getItem("boyPlayers");
     const savedGirls = localStorage.getItem("girlPlayers");
 
-    // Populate attendance with attendanceData
-    console.log(savedAttendanceData);
-    attendanceData = JSON.parse(savedAttendanceData);
-    const boys = attendanceData['Boys'];
-    const girls = attendanceData['Girls'];
-
-    console.log("Loaded data:", attendanceData);
-
-    if (attendanceData['Boys'].length > 0 || attendanceData['Girls'].length > 0) {
-        makeAttendanceTable(boys, girls);
-    }
-    
-    // Remake boys draw
+    console.log(savedBoys);
     if (savedBoysMemory !== "{}") {
         boysMemory = JSON.parse(savedBoysMemory);
         boyPlayers = JSON.parse(savedBoys);
@@ -516,7 +504,7 @@ function restoreDrawFromLocalStorage() {
         generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
     }
 
-    // Remake girls draw
+    console.log(savedGirls);
     if (savedGirlsMemory !== "{}") {
         girlsMemory = JSON.parse(savedGirlsMemory);
         girlPlayers = JSON.parse(savedGirls);
@@ -526,72 +514,21 @@ function restoreDrawFromLocalStorage() {
     }
 }
 
-function makeAttendanceTable(boys, girls) {
-    const attendanceTable = document.querySelector('#roster tbody');
-    attendanceTable.innerHTML = '';
-
-    for (let i = 0; i < Math.max(boys.length, girls.length); i++) {
-        const row = document.createElement('tr');
-
-        const boyCell = document.createElement('td');
-        boyCell.textContent = boys[i] || ''; // Empty if no name
-
-        const girlCell = document.createElement('td');
-        girlCell.textContent = girls[i] || ''; // Empty if no name
-
-        // Re-add clickable feature
-        boyCell.addEventListener('click', () => {
-            boyCell.classList.toggle('roster-cell-selected');
-        });
-
-        // Re-add clickable feature
-        girlCell.addEventListener('click', () => {
-            girlCell.classList.toggle('roster-cell-selected');
-        });
-
-        row.appendChild(boyCell);
-        row.appendChild(girlCell);
-
-        attendanceTable.appendChild(row);
-    }
-}
-
 // --- Global variables ---
 // This will store all boys draw data
 let boysMemory = {};
 let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
-let attendanceData = {
-    'Boys' : ['Dan', 'Michael', 'Max'],
-    'Girls' : ['Bridget', 'Lena', 'Sofia']
-};
 
-// Preset boy and girl names (for testing or already on roster)
-const presetBoyNames = ['Dan', 'Michael', 'Max']
-const presetGirlNames = ['Bridget', 'Lena', 'Sofia']
-//makeAttendanceTable(presetBoyNames, presetGirlNames);
-
-
-// Update attendanceData on startup (if there are preset players)
-document.querySelectorAll('#roster tbody tr').forEach(row => {
-    const boy = row.children[0].textContent.trim();
-    const girl = row.children[1].textContent.trim();
-    attendanceData['Boys'].push(boy);
-    attendanceData['Girls'].push(girl);
-});
-
-// Save updated attendanceData to localStorage
-saveMemory();
-console.log("HERE:", attendanceData);
 
 // --- Static event listeners ---
 // Making the attendance table clickable
-// document.querySelectorAll('#roster td').forEach(cell => {
-//     cell.addEventListener('click', () => {
-//         cell.classList.toggle('roster-cell-selected');
-//     });
-// });
+document.querySelectorAll('#roster td').forEach(cell => {
+    cell.addEventListener('click', () => {
+        cell.classList.toggle('roster-cell-selected');
+    });
+});
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
@@ -599,12 +536,11 @@ boysDrawButton.addEventListener("click", () => {
     boyPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const boy = row.children[0].textContent.trim();
-        if (boy !== '') {
-            boyPlayers.push(boy);
-        }
+        const boy = row.children[0];
+        boyPlayers.push(boy.textContent.trim());
+        
     });
-    //console.log(boyPlayers);
+    console.log(boyPlayers);
     generateBoysDraw(boyPlayers, "boysdraw");
     saveMemory(); // Save to localStorage
 });
@@ -615,12 +551,11 @@ girlsDrawButton.addEventListener("click", () => {
     girlPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const girl = row.children[1].textContent.trim();
-        if (girl !== '') {
-            girlPlayers.push(girl);
-        }
+        const girl = row.children[1];
+        girlPlayers.push(girl.textContent.trim());
+        
     });
-    //console.log(girlPlayers);
+    console.log(girlPlayers);
     generateGirlsDraw(girlPlayers, "girlsdraw");
     saveMemory(); // Save to localStorage
 });
@@ -630,25 +565,10 @@ removeButton.addEventListener("click", () => {
     // Loop through each cell and remove the text content if it's highlighted
     document.querySelectorAll('#roster tbody td').forEach(cell => {
         if (cell.classList.contains('roster-cell-selected')) {
-            // Update attendanceData for LocalStorage
-            const nameToRemove = cell.textContent.trim();
-
-            if (attendanceData["Boys"].includes(nameToRemove)) {
-                attendanceData["Boys"] = attendanceData["Boys"].filter(name => name !== nameToRemove);
-            } else if (attendanceData["Girls"].includes(nameToRemove)) {
-                attendanceData["Girls"] = attendanceData["Girls"].filter(name => name !== nameToRemove);
-            }
-
-            // Clear the cell content and deselect it
             cell.textContent = '';
             cell.classList.remove('roster-cell-selected');
         }
     });
-
-    console.log("Remove:", attendanceData);
-
-    // Save updated attendanceData to localStorage
-    saveMemory();
 
     // Check if any row is empty and remove it
     document.querySelectorAll('#roster tbody tr').forEach(row => {
@@ -664,10 +584,6 @@ removeButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
     boysMemory = {};
     girlsMemory = {};
-    attendanceData = {
-        'Boys' : [],
-        'Girls' : []
-    };
     const boysTable = document.getElementById("boysdraw");
     boysTable.innerHTML='';
     const girlsTable = document.getElementById("girlsdraw");
