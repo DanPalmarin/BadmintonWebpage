@@ -500,10 +500,35 @@ function restoreDrawFromLocalStorage() {
     attendanceData = JSON.parse(savedAttendanceData);
     const boys = attendanceData['Boys'];
     const girls = attendanceData['Girls'];
-    const attendanceTable = document.querySelector('#roster tbody');
-    attendanceTable.innerHTML = '';
 
     console.log("Loaded data:", attendanceData);
+
+    if (attendanceData['Boys'].length > 0 || attendanceData['Girls'].length > 0) {
+        makeAttendanceTable(boys, girls);
+    }
+    
+    // Remake boys draw
+    if (savedBoysMemory !== "{}") {
+        boysMemory = JSON.parse(savedBoysMemory);
+        boyPlayers = JSON.parse(savedBoys);
+
+        // Generate the boys draw
+        generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
+    }
+
+    // Remake girls draw
+    if (savedGirlsMemory !== "{}") {
+        girlsMemory = JSON.parse(savedGirlsMemory);
+        girlPlayers = JSON.parse(savedGirls);
+
+        // Generate the boys draw
+        generateGirlsDraw(girlPlayers, "girlsdraw", Boolean(savedGirlsMemory));
+    }
+}
+
+function makeAttendanceTable(boys, girls) {
+    const attendanceTable = document.querySelector('#roster tbody');
+    attendanceTable.innerHTML = '';
 
     for (let i = 0; i < Math.max(boys.length, girls.length); i++) {
         const row = document.createElement('tr');
@@ -529,24 +554,6 @@ function restoreDrawFromLocalStorage() {
 
         attendanceTable.appendChild(row);
     }
-
-    // Remake boys draw
-    if (savedBoysMemory !== "{}") {
-        boysMemory = JSON.parse(savedBoysMemory);
-        boyPlayers = JSON.parse(savedBoys);
-
-        // Generate the boys draw
-        generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
-    }
-
-    // Remake girls draw
-    if (savedGirlsMemory !== "{}") {
-        girlsMemory = JSON.parse(savedGirlsMemory);
-        girlPlayers = JSON.parse(savedGirls);
-
-        // Generate the boys draw
-        generateGirlsDraw(girlPlayers, "girlsdraw", Boolean(savedGirlsMemory));
-    }
 }
 
 // --- Global variables ---
@@ -556,9 +563,14 @@ let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
 let attendanceData = {
-    'Boys' : [],
-    'Girls' : []
+    'Boys' : ['Dan', 'Michael', 'Max'],
+    'Girls' : ['Bridget', 'Lena', 'Sofia']
 };
+
+// Preset boy and girl names (for testing or already on roster)
+const presetBoyNames = ['Dan', 'Michael', 'Max']
+const presetGirlNames = ['Bridget', 'Lena', 'Sofia']
+//makeAttendanceTable(presetBoyNames, presetGirlNames);
 
 
 // Update attendanceData on startup (if there are preset players)
@@ -569,15 +581,17 @@ document.querySelectorAll('#roster tbody tr').forEach(row => {
     attendanceData['Girls'].push(girl);
 });
 
-saveMemory(); // Update localStorage
+// Save updated attendanceData to localStorage
+saveMemory();
+console.log("HERE:", attendanceData);
 
 // --- Static event listeners ---
 // Making the attendance table clickable
-document.querySelectorAll('#roster td').forEach(cell => {
-    cell.addEventListener('click', () => {
-        cell.classList.toggle('roster-cell-selected');
-    });
-});
+// document.querySelectorAll('#roster td').forEach(cell => {
+//     cell.addEventListener('click', () => {
+//         cell.classList.toggle('roster-cell-selected');
+//     });
+// });
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
@@ -618,7 +632,6 @@ removeButton.addEventListener("click", () => {
         if (cell.classList.contains('roster-cell-selected')) {
             // Update attendanceData for LocalStorage
             const nameToRemove = cell.textContent.trim();
-            console.log(nameToRemove);
 
             if (attendanceData["Boys"].includes(nameToRemove)) {
                 attendanceData["Boys"] = attendanceData["Boys"].filter(name => name !== nameToRemove);
@@ -632,7 +645,7 @@ removeButton.addEventListener("click", () => {
         }
     });
 
-    console.log(attendanceData);
+    console.log("Remove:", attendanceData);
 
     // Save updated attendanceData to localStorage
     saveMemory();
