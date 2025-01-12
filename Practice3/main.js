@@ -480,11 +480,15 @@ function saveMemory() {
     localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
+
+    // Log localStorage to verify the data is saved
+    console.log("Saved to localStorage: ", localStorage);
 }
 
 
 // Load boys and girls draw table and fill values from boysMemory and girlsMemory
 function restoreDrawFromLocalStorage() {
+    console.log("Restore function is being called");
     const savedAttendanceData = localStorage.getItem("attendanceData");
     const savedBoysMemory = localStorage.getItem("boysMemory");
     const savedGirlsMemory = localStorage.getItem("girlsMemory");
@@ -492,11 +496,14 @@ function restoreDrawFromLocalStorage() {
     const savedGirls = localStorage.getItem("girlPlayers");
 
     // Populate attendance with attendanceData
+    console.log(savedAttendanceData);
     attendanceData = JSON.parse(savedAttendanceData);
     const boys = attendanceData['Boys'];
     const girls = attendanceData['Girls'];
     const attendanceTable = document.querySelector('#roster tbody');
     attendanceTable.innerHTML = '';
+
+    console.log("Loaded data:", attendanceData);
 
     for (let i = 0; i < Math.max(boys.length, girls.length); i++) {
         const row = document.createElement('tr');
@@ -609,10 +616,26 @@ removeButton.addEventListener("click", () => {
     // Loop through each cell and remove the text content if it's highlighted
     document.querySelectorAll('#roster tbody td').forEach(cell => {
         if (cell.classList.contains('roster-cell-selected')) {
+            // Update attendanceData for LocalStorage
+            const nameToRemove = cell.textContent.trim();
+            console.log(nameToRemove);
+
+            if (attendanceData["Boys"].includes(nameToRemove)) {
+                attendanceData["Boys"] = attendanceData["Boys"].filter(name => name !== nameToRemove);
+            } else if (attendanceData["Girls"].includes(nameToRemove)) {
+                attendanceData["Girls"] = attendanceData["Girls"].filter(name => name !== nameToRemove);
+            }
+
+            // Clear the cell content and deselect it
             cell.textContent = '';
             cell.classList.remove('roster-cell-selected');
         }
     });
+
+    console.log(attendanceData);
+
+    // Save updated attendanceData to localStorage
+    saveMemory();
 
     // Check if any row is empty and remove it
     document.querySelectorAll('#roster tbody tr').forEach(row => {
@@ -628,6 +651,10 @@ removeButton.addEventListener("click", () => {
 resetButton.addEventListener("click", () => {
     boysMemory = {};
     girlsMemory = {};
+    attendanceData = {
+        'Boys' : [],
+        'Girls' : []
+    };
     const boysTable = document.getElementById("boysdraw");
     boysTable.innerHTML='';
     const girlsTable = document.getElementById("girlsdraw");
