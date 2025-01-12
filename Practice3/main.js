@@ -523,12 +523,18 @@ let girlPlayers = [];
 
 
 // --- Static event listeners ---
-// Making the attendance table clickable
-document.querySelectorAll('#roster td').forEach(cell => {
-    cell.addEventListener('click', () => {
-        cell.classList.toggle('roster-cell-selected');
-    });
+// Making the attendance table clickable for all present and future names
+roster.addEventListener("click", (event) => {
+    if (event.target.tagName === "TD") {
+        event.target.classList.toggle('roster-cell-selected');
+    }
 });
+
+// document.querySelectorAll('#roster td').forEach(cell => {
+//     cell.addEventListener('click', () => {
+//         cell.classList.toggle('roster-cell-selected');
+//     });
+// });
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
@@ -536,7 +542,7 @@ boysDrawButton.addEventListener("click", () => {
     boyPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const boy = row.children[0].textContent.trim();
+        const boy = row.children[0]?.textContent.trim();
         if (boy !== '') {
             boyPlayers.push(boy);
         }
@@ -553,7 +559,7 @@ girlsDrawButton.addEventListener("click", () => {
     girlPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const girl = row.children[1].textContent.trim();
+        const girl = row.children[1]?.textContent.trim();
         if (girl !== '') {
             girlPlayers.push(girl);
         }
@@ -562,6 +568,71 @@ girlsDrawButton.addEventListener("click", () => {
     console.log(girlPlayers);
     generateGirlsDraw(girlPlayers, "girlsdraw");
     saveMemory(); // Save to localStorage
+});
+
+// Add event listener for adding a new player
+addButton.addEventListener("click", () => {
+    // Get the value of the entry box
+    const enteredText = entryBox.value.trim();
+
+    // Check if the entry box has some text
+    if (enteredText === "") {
+        alert("Please enter some text.");
+        return; // Exit if no text was entered
+    }
+
+    // Get the selected value from the radiobuttons
+    const selectedGender = document.querySelector('input[name="gender"]:checked')?.value;
+
+    // Check if a gender has been selected
+    if (!selectedGender) {
+        alert("Please select a gender.");
+        return; // Exit if no gender is selected
+    }
+
+
+    // Determine the column to check (0 for Boys, 1 for Girls)
+    const columnIndex = selectedGender === "Boys" ? 0 : 1;
+
+    // Check for an empty cell in the appropriate column
+    let emptyCellFound = false;
+    const rows = roster.querySelectorAll("tr");
+
+    for (const row of rows) {
+        const cell = row.children[columnIndex];
+        if (cell && cell.textContent.trim() === "") {
+            // Fill the first empty cell with the entered text
+            cell.textContent = enteredText;
+            emptyCellFound = true;
+            break; // Stop checking further rows
+        }
+    }
+
+    // If no empty cell was found, add a new row
+    if (!emptyCellFound) {
+        const newRow = document.createElement("tr");
+
+        // Create a cell for Boy and a cell for Girl
+        const boyCell = document.createElement("td");
+        const girlCell = document.createElement("td");
+
+        if (selectedGender === "Boys") {
+            boyCell.textContent = enteredText;
+            newRow.appendChild(boyCell); // Append to the row
+            newRow.appendChild(girlCell); // Empty girl cell
+        } else if (selectedGender === "Girls") {
+            girlCell.textContent = enteredText;
+            newRow.appendChild(boyCell); // Empty boy cell
+            newRow.appendChild(girlCell); // Append to the row
+        }
+
+        // Get the tbody element and append the new row to it
+        const tbody = roster.querySelector('tbody');
+        tbody.appendChild(newRow); // Append the new row to tbody
+    }
+
+    // Clear entry box
+    entryBox.value = "";
 });
 
 // Remove Selected Player(s) button
