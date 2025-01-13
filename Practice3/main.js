@@ -480,42 +480,17 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
 
 // Save memory to LocalStorage
 function saveMemory() {
-    console.log(boysMemory);
+    localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
+    localStorage.setItem("girlAttendance", JSON.stringify(girlAttendance));
     localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
     localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
 }
 
-
-// Load boys and girls draw table and fill values from boysMemory and girlsMemory
-function restoreDrawFromLocalStorage() {
-    const savedBoysMemory = localStorage.getItem("boysMemory");
-    const savedGirlsMemory = localStorage.getItem("girlsMemory");
-    const savedBoys = localStorage.getItem("boyPlayers");
-    const savedGirls = localStorage.getItem("girlPlayers");
-
-    console.log(savedBoys);
-    if (savedBoysMemory !== "{}") {
-        boysMemory = JSON.parse(savedBoysMemory);
-        boyPlayers = JSON.parse(savedBoys);
-
-        // Generate the boys draw
-        generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
-    }
-
-    console.log(savedGirls);
-    if (savedGirlsMemory !== "{}") {
-        girlsMemory = JSON.parse(savedGirlsMemory);
-        girlPlayers = JSON.parse(savedGirls);
-
-        // Generate the boys draw
-        generateGirlsDraw(girlPlayers, "girlsdraw", Boolean(savedGirlsMemory));
-    }
-}
-
 // --- Global variables ---
-// This will store all boys draw data
+let boyAttendance = [];
+let girlAttendance = [];
 let boysMemory = {};
 let girlsMemory = {};
 let boyPlayers = [];
@@ -590,9 +565,17 @@ addButton.addEventListener("click", () => {
         return; // Exit if no gender is selected
     }
 
-
     // Determine the column to check (0 for Boys, 1 for Girls)
     const columnIndex = selectedGender === "Boys" ? 0 : 1;
+
+    // The names must be unique to their column
+    if (boyAttendance.includes(enteredText)) {
+        alert("A boy has already been added with that name.")
+        return; // Exit
+    } else if (girlAttendance.includes(enteredText)) {
+        alert("A girl has already been added with that name.")
+        return; // Exit
+    }  
 
     // Check for an empty cell in the appropriate column
     let emptyCellFound = false;
@@ -631,15 +614,35 @@ addButton.addEventListener("click", () => {
         tbody.appendChild(newRow); // Append the new row to tbody
     }
 
+    // Update memory
+    if (columnIndex === 0) {
+        boyAttendance.push(enteredText);
+    } else if (columnIndex === 1) {
+        girlAttendance.push(enteredText);
+    }
+
     // Clear entry box
     entryBox.value = "";
+
+    // Log attendance memory
+    console.log("Add button:", columnIndex, boyAttendance, girlAttendance);
+    saveMemory();
 });
 
 // Remove Selected Player(s) button
+// Note: the names in each column must be unique
 removeButton.addEventListener("click", () => {
     // Loop through each cell and remove the text content if it's highlighted
     document.querySelectorAll('#roster tbody td').forEach(cell => {
         if (cell.classList.contains('roster-cell-selected')) {
+            // Update memory first
+            const nameToRemove = cell.textContent.trim();
+            if (cell.cellIndex === 0) {
+                boyAttendance = boyAttendance.filter(name => name !== nameToRemove);
+            } else if (cell.cellIndex === 1) {
+                girlAttendance = girlAttendance.filter(name => name !== nameToRemove);
+            }
+
             cell.textContent = '';
             cell.classList.remove('roster-cell-selected');
         }
@@ -652,13 +655,21 @@ removeButton.addEventListener("click", () => {
             row.remove();
         }
     });
+
+    // Log attendance memory
+    saveMemory();
+    console.log("Remove button:", boyAttendance, girlAttendance);
     
 });
 
 // Reset button
 resetButton.addEventListener("click", () => {
+    boyAttendance = [];
+    girlAttendance = [];
     boysMemory = {};
     girlsMemory = {};
+    boyPlayers = [];
+    girlPlayers = [];
     const boysTable = document.getElementById("boysdraw");
     boysTable.innerHTML='';
     const girlsTable = document.getElementById("girlsdraw");
@@ -666,6 +677,59 @@ resetButton.addEventListener("click", () => {
     localStorage.clear();
 });
 
+// Load data from localStorage when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    // --- ATTENDANCE TABLE ---
+    const savedBoyAttendance = JSON.parse(localStorage.getItem("boyAttendance") || "[]");
+    const savedGirlAttendance = JSON.parse(localStorage.getItem("girlAttendance") || "[]");
+
+    // Initialize the attendance arrays
+    boyAttendance = savedBoyAttendance;
+    girlAttendance = savedGirlAttendance;
+
+    // Ensure the table is restored properly
+    const tbody = roster.querySelector('tbody');
+    tbody.innerHTML = '';  // Clear existing table rows (only once)
+
+    const maxRows = Math.max(boyAttendance.length, girlAttendance.length);
+
+    // Add rows for each boy and girl
+    for (let i = 0; i < maxRows; i++) {
+        const newRow = document.createElement('tr');
+
+        const boyCell = document.createElement('td');
+        boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
+        newRow.appendChild(boyCell);
+
+        const girlCell = document.createElement('td');
+        girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
+        newRow.appendChild(girlCell);
+
+        tbody.appendChild(newRow);
+    }
+
+    // --- BOYS DRAW ---
+    const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "{}");
+    const savedBoys = JSON.parse(localStorage.getItem("boyPlayers") || "[]");
+    if (savedBoysMemory !== "{}") {
+        boysMemory = savedBoysMemory;
+        boyPlayers = savedBoys;
+
+        // Generate the boys draw
+        generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
+    }
+
+    // --- GIRLS DRAW ---
+    const savedGirlsMemory = JSON.parse(localStorage.getItem("girlsMemory") || "{}");
+    const savedGirls = JSON.parse(localStorage.getItem("girlPlayers") || "[]");
+    if (savedGirlsMemory !== "{}") {
+        girlsMemory = savedGirlsMemory;
+        girlPlayers = savedGirls;
+
+        // Generate the girls draw
+        generateGirlsDraw(girlPlayers, "girlsdraw", Boolean(savedGirlsMemory));
+    }
+});
 
 // --- Tab Buttons ---
 // Return arrays of tabButton objects and their contents
@@ -693,6 +757,3 @@ document.querySelector('.tab-button[data-tab="attendance"]').click();
 
 // Save data when the page is unloaded
 window.addEventListener("beforeunload", saveMemory);
-
-// Restore data when the page is loaded
-window.addEventListener("load", () => restoreDrawFromLocalStorage());
