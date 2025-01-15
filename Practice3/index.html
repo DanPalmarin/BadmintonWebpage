@@ -25,6 +25,7 @@
             <button class="tab-button" data-tab="attendance">Attendance</button>
             <button class="tab-button" data-tab="boys-draw">Boys Draw</button>
             <button class="tab-button" data-tab="girls-draw">Girls Draw</button>
+            <button class="tab-button" data-tab="results">Results</button>
         </div>
 
         <div id="attendance" class="tab-content">
@@ -121,6 +122,44 @@
                         </tr>
                     </thead>
                     <tbody id="girlsdraw">
+                        <!-- Dynamically added rows will go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id = "results" class="tab-content hidden">
+            <button id="boysResultsButton">Boys Results</button>
+
+            <div class="boys-results-container">
+                <table id="boys-results">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Games </th>
+                            <th>Wins/Loses</th>
+                            <th>Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boys-results-tbody">
+                        <!-- Dynamically added rows will go here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button id="girlsResultsButton">Girls Results</button>
+
+            <div class="girls-results-container">
+                <table id="girls-results">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Games </th>
+                            <th>Wins/Loses</th>
+                            <th>Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody id="girls-results-tbody">
                         <!-- Dynamically added rows will go here -->
                     </tbody>
                 </table>

@@ -1,5 +1,6 @@
 import { makeDraw } from './masterDraws.js';
 
+// Make boys draw
 function generateBoysDraw(players, tableBodyId, isRestore = false) {
     // Build the draw from the masterDraw module
     const games = makeDraw(players);
@@ -239,6 +240,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
     console.log(boysMemory);
 }
 
+// Make girls draw
 function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     // Build the draw from the masterDraw module
     const games = makeDraw(players);
@@ -478,6 +480,39 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     console.log(girlsMemory);
 }
 
+// Calculate boys results
+function drawResults(memory) {
+    let playerStats = {};
+
+    // Loop through each game in memory
+    for (const [gameIndex, gameData] of Object.entries(memory)) {
+        for (const [key, value] of Object.entries(gameData)) {
+            // Skip Game keys
+            if (key.startsWith("Game")) continue;
+
+            // Initialize player stats if not already present
+            if (!playerStats[key]) {
+                playerStats[key] = { wins: 0, losses: 0 };
+            }
+
+            // Update stats based on win/lose status
+            if (value === true) {
+                playerStats[key].wins += 1;
+            } else if (value === false) {
+                playerStats[key].losses += 1;
+            }
+        }
+    }
+
+    // Convert the object into an array of [key, value] pairs
+    const sortedPlayerStats = Object.entries(playerStats).sort(([, a], [, b]) => b.wins - a.wins);
+
+    // Convert the sorted array back into an object (if needed)
+    //const sortedPlayerStats = Object.fromEntries(sortedEntries);
+
+    return sortedPlayerStats;
+}
+
 // Save memory to LocalStorage
 function saveMemory() {
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
@@ -497,7 +532,7 @@ let boyPlayers = [];
 let girlPlayers = [];
 
 
-// --- Static event listeners ---
+// --- EVENT LISTENERS ---
 // Making the attendance table clickable for all present and future names
 roster.addEventListener("click", (event) => {
     if (event.target.tagName === "TD") {
@@ -675,6 +710,17 @@ resetButton.addEventListener("click", () => {
     const girlsTable = document.getElementById("girlsdraw");
     girlsTable.innerHTML='';
     localStorage.clear();
+});
+
+// Results buttons
+boysResultsButton.addEventListener("click", () => {
+    let boysResults = drawResults(boysMemory);
+    console.log(boysResults);
+});
+
+girlsResultsButton.addEventListener("click", () => {
+    let girlsResults = drawResults(girlsMemory);
+    console.log(girlsResults);
 });
 
 // Load data from localStorage when the page loads
