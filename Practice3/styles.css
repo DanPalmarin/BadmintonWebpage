@@ -103,19 +103,6 @@ main {
     font-size: 1rem;
 }
 
-/* Media Queries for smaller screens */
-@media (max-width: 768px) {
-    .entry-box {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .entry-box {
-        font-size: 0.8rem;
-    }
-}
-
 label {
     margin-right: 10px;
     font-size: 1rem;
@@ -132,6 +119,23 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+/* Media Queries for smaller screens */
+@media (max-width: 768px) {
+    table,
+    button,
+    .entry-box {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    table,
+    button,
+    .entry-box {
+        font-size: 0.8rem;
+    }
 }
 
 button:hover {
