@@ -481,7 +481,11 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
 }
 
 // Calculate boys results
-function drawResults(memory) {
+function drawResults(memory, tableBodyId) {
+    const resultsTable = document.getElementById(tableBodyId);
+
+    resultsTable.innerHTML = '';
+
     let playerStats = {};
 
     // Loop through each game in memory
@@ -507,10 +511,32 @@ function drawResults(memory) {
     // Convert the object into an array of [key, value] pairs
     const sortedPlayerStats = Object.entries(playerStats).sort(([, a], [, b]) => b.wins - a.wins);
 
-    // Convert the sorted array back into an object (if needed)
-    //const sortedPlayerStats = Object.fromEntries(sortedEntries);
+    // Populate table with data
+    for (let i = 0; i < sortedPlayerStats.length; i++) {
+        const player = sortedPlayerStats[i][0];
+        const totalGames = sortedPlayerStats[i][1].wins + sortedPlayerStats[i][1].losses;
+        const wins = sortedPlayerStats[i][1].wins;
+        const losses = sortedPlayerStats[i][1].losses;
+        const rank = i + 1;
 
-    return sortedPlayerStats;
+        const row = document.createElement('tr');
+        const playerCell = document.createElement('td');
+        const totalGamesCell = document.createElement('td');
+        const winsCell = document.createElement('td');
+        const rankCell = document.createElement('td');
+
+        playerCell.textContent = player;
+        totalGamesCell.textContent = totalGames;
+        winsCell.textContent = `${wins} - ${losses}`;
+        rankCell.textContent = rank;
+
+        row.appendChild(playerCell);
+        row.appendChild(totalGamesCell);
+        row.appendChild(winsCell);
+        row.appendChild(rankCell);
+        resultsTable.appendChild(row);
+    }
+
 }
 
 // Save memory to LocalStorage
@@ -714,13 +740,11 @@ resetButton.addEventListener("click", () => {
 
 // Results buttons
 boysResultsButton.addEventListener("click", () => {
-    let boysResults = drawResults(boysMemory);
-    console.log(boysResults);
+    let boysResults = drawResults(boysMemory, "boys-results-tbody");
 });
 
 girlsResultsButton.addEventListener("click", () => {
-    let girlsResults = drawResults(girlsMemory);
-    console.log(girlsResults);
+    let girlsResults = drawResults(girlsMemory, "girls-results-tbody");
 });
 
 // Load data from localStorage when the page loads

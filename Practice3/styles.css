@@ -1,5 +1,5 @@
 /* Attendance table style*/
-#roster td:hover {
+/* #roster td:hover {
     background-color: #ddd;
   }
 
@@ -9,11 +9,191 @@
 
 .roster-cell-selected {
     background-color: lightgray;
-}
+} */
 
 /* Winner button style */
+/* .winner-button.selected {
+    background-color: #28a745;
+    color: white;
+} */
+
+/* General reset for consistent styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #007BFF;
+    color: white;
+    margin-bottom: 20px;
+}
+
+header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    color: black;
+    background-color: #e7e7e7;
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #007BFF;
+    color: white;
+}
+
+.tab-button.active {
+    background-color: #007BFF;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content:not(.hidden) {
+    display: block;
+}
+
+.entry-box {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+label {
+    margin-right: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    margin: 5px 0;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#roster {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#roster th, #roster td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+#roster th {
+    background-color: #007BFF;
+    color: white;
+}
+
+#roster td:hover {
+    background-color: #ddd;
+}
+
+#roster td {
+    cursor: pointer;
+}
+
+.roster-cell-selected {
+    background-color: lightgray;
+}
+
 .winner-button.selected {
     background-color: #28a745;
     color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #007BFF;
+    color: white;
+}
+
+.boysdraw-container, .girlsdraw-container {
+    margin-top: 20px;
+}
+
+.boys-results-container, .girls-results-container {
+    margin-top: 20px;
+}
+
+.boysdraw-container button:not(.selected),
+.girlsdraw-container button:not(.selected) {
+    background-color: #e7e7e7;
+    color: #333;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.active {
+    font-weight: bold;
 }
 
