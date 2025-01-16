@@ -182,6 +182,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
 
         // --- Scores cell (6 entry boxes) ---
         const scoresCell = document.createElement("td");
+        scoresCell.className = 'scoresCell'
         const scoresContainer = document.createElement("div");
 
         // Add three rows of inputs
@@ -422,6 +423,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
 
         // --- Scores cell (6 entry boxes) ---
         const scoresCell = document.createElement("td");
+        scoresCell.className = 'scoresCell'
         const scoresContainer = document.createElement("div");
 
         // Add three rows of inputs
