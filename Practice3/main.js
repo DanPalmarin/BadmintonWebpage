@@ -727,6 +727,12 @@ removeButton.addEventListener("click", () => {
 
 // Reset button
 resetButton.addEventListener("click", () => {
+    // Ask for confirmation
+    const confirmation = confirm("This clears all data and memory! Are you sure you want to reset and erase everything? ");
+
+    if (!confirmation) return;
+
+    
     boyAttendance = [];
     girlAttendance = [];
     boysMemory = {};

@@ -1,10 +1,27 @@
-/* General reset for consistent styling */
+/****************************************
+ General reset for consistent styling
+ ****************************************/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Define what hidden and active do */
+.hidden {
+    display: none !important;
+}
+
+.active {
+    font-weight: bold;
+}
+
+/* ORDER OF HTML */
+
+/****************************************
+ Body covers viewport: set backgrounds,
+ typography, and global spacing
+ ****************************************/
 body {
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
@@ -13,6 +30,9 @@ body {
     padding: 20px;
 }
 
+/****************************************
+ Style headers
+ ****************************************/
 header {
     text-align: center;
     padding: 10px 0;
@@ -26,6 +46,17 @@ header h2 {
     font-weight: 700;
 }
 
+/* MOBILE header style */
+@media (max-width: 480px) {
+    header h2 {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+}
+
+/****************************************
+ Main focuses on layout: width, margin
+ ****************************************/
 main {
     max-width: 1200px;
     margin: 0 auto;
@@ -35,7 +66,13 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Default styling for larger screens */
+/****************************************
+ Style tabs:
+ tab: focuses on tab position
+ tab-button: focuses on appearance
+ tab-content: hides tab content by default
+ ****************************************/
+
 .tab {
     display: flex;
     justify-content: flex-start;
@@ -67,21 +104,6 @@ main {
     color: white;
 }
 
-/* Media Queries for smaller screens */
-@media (max-width: 768px) {
-    .tab-button {
-        font-size: 0.9rem; /* Slightly smaller font */
-        padding: 8px 15px; /* Adjust padding */
-    }
-}
-
-@media (max-width: 480px) {
-    .tab-button {
-        font-size: 0.8rem; /* Further reduce font size */
-        padding: 6px 12px; /* Further reduce padding */
-    }
-}
-
 .tab-content {
     display: none;
     border: 1px solid #ddd;
@@ -94,6 +116,21 @@ main {
     display: block;
 }
 
+/* Stack tabs vertically on M/S mobile */
+@media (max-width: 375px) {
+    .tab-button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .tab {
+        flex-direction: column;
+    }
+}
+
+/****************************************
+ Styles entry boxes, labels, and buttons
+ ****************************************/
 .entry-box {
     width: 100%;
     padding: 10px;
@@ -121,27 +158,36 @@ button {
     transition: background-color 0.3s;
 }
 
-/* Media Queries for smaller screens */
-@media (max-width: 768px) {
-    table,
-    button,
-    .entry-box {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    table,
-    button,
-    .entry-box {
-        font-size: 0.8rem;
-    }
-}
-
 button:hover {
     background-color: #0056b3;
 }
 
+/* Stack buttons vertically on small screens */
+@media (max-width: 425px) {
+    .button-container {
+        flex-direction: column;  /* Stack buttons vertically */
+        align-items: center;     /* Center buttons horizontally */
+    }
+
+    button {
+        width: 100%;             /* Buttons take up full width */
+        margin: 5px 0;           /* Space between buttons */
+    }
+}
+
+/* Scale font on mobile*/
+@media (max-width: 425px) {
+    .entry-box,
+    label,
+    button {
+        font-size: 0.8rem;
+    }
+}
+
+
+/****************************************
+ Styles the roster table
+ ****************************************/
 #roster {
     width: 100%;
     border-collapse: collapse;
@@ -171,16 +217,19 @@ button:hover {
     background-color: lightgray;
 }
 
-.winner-button.selected {
-    background-color: #28a745;
-    color: white;
+/* Scale font on mobile*/
+@media (max-width: 425px) {
+    #roster {
+        font-size: 0.8rem;
+    }
 }
 
-.table-container {
-    overflow-x: auto;
-    margin-top: 20px;
-}
-
+/****************************************
+ Style all other tables:
+ Boys and girls draw tables
+ Result tables
+ Style all tables for internal scrolling
+ ****************************************/
 table {
     width: 100%;
     border-collapse: collapse;
@@ -195,6 +244,32 @@ th, td {
 
 th {
     background-color: #007BFF;
+    color: white;
+}
+
+.roster-container,
+.boysdraw-container,
+.girlsdraw-container,
+.boys-results-container,
+.girls-results-container {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 75vh;
+}
+
+/* Scale font on mobile*/
+@media (max-width: 425px) {
+    table {
+        font-size: 0.8rem;
+    }
+}
+
+/****************************************
+ Styles the unique cells of the boys and
+ girls draw tables
+ ****************************************/
+.winner-button.selected {
+    background-color: #28a745;
     color: white;
 }
 
@@ -229,8 +304,6 @@ th {
     gap: 10px; /* Space between rows */
 }
 
-
-
 .score-input {
     width: 40px;
     padding: 5px;
@@ -253,12 +326,4 @@ th {
     display: inline-block;
     width: 10px;
     text-align: center;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.active {
-    font-weight: bold;
 }
