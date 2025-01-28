@@ -14,7 +14,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         boysMemory = {};  // Only clear boysMemory if not restoring
-        console.log("1. Memory cleared!");
+        //console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -101,7 +101,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         }
 
         //boysMemory = {};
-        console.log("2. Memory cleared!");
+        //console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -167,6 +167,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             boysMemory[index+1][player1] = true;
             boysMemory[index+1][player2] = false;
+            saveMemory();
         });
 
         player2Button.addEventListener("click", () => {
@@ -178,6 +179,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             boysMemory[index+1][player2] = true;
             boysMemory[index+1][player1] = false;
+            saveMemory();
         });
 
         // --- Scores cell (6 entry boxes) ---
@@ -209,11 +211,13 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             scoreInput1.addEventListener('input', () => {
                 boysMemory[index+1][`Game${i}`][0] = scoreInput1.value;
+                saveMemory();
             });
 
             // MEMORY UPDATE
             scoreInput2.addEventListener('input', () => {
                 boysMemory[index+1][`Game${i}`][1] = scoreInput2.value;
+                saveMemory();
             });
 
             scoreRow.appendChild(scoreInput1);
@@ -238,7 +242,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    console.log(boysMemory);
+    //console.log(boysMemory);
 }
 
 // Make girls draw
@@ -255,7 +259,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     // This is important if boys are added or removed from the draw
     if (!isRestore) {
         girlsMemory = {};  // Only clear girlsMemory if not restoring
-        console.log("1. Memory cleared!");
+        //console.log("1. Memory cleared!");
     }
 
     // If the table has already been created, we loop through and store values
@@ -342,7 +346,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         }
 
         //girlsMemory = {};
-        console.log("2. Memory cleared!");
+        //console.log("2. Memory cleared!");
     }
 
     // Clear the table
@@ -408,6 +412,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             girlsMemory[index+1][player1] = true;
             girlsMemory[index+1][player2] = false;
+            saveMemory();
         });
 
         player2Button.addEventListener("click", () => {
@@ -419,6 +424,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             girlsMemory[index+1][player2] = true;
             girlsMemory[index+1][player1] = false;
+            saveMemory();
         });
 
         // --- Scores cell (6 entry boxes) ---
@@ -450,11 +456,13 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             // MEMORY UPDATE
             scoreInput1.addEventListener('input', () => {
                 girlsMemory[index+1][`Game${i}`][0] = scoreInput1.value;
+                saveMemory();
             });
 
             // MEMORY UPDATE
             scoreInput2.addEventListener('input', () => {
                 girlsMemory[index+1][`Game${i}`][1] = scoreInput2.value;
+                saveMemory();
             });
 
             scoreRow.appendChild(scoreInput1);
@@ -479,7 +487,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         // Add row to table
         tableBody.appendChild(row);
     })
-    console.log(girlsMemory);
+    //console.log(girlsMemory);
 }
 
 // Calculate boys results
@@ -568,12 +576,6 @@ roster.addEventListener("click", (event) => {
     }
 });
 
-// document.querySelectorAll('#roster td').forEach(cell => {
-//     cell.addEventListener('click', () => {
-//         cell.classList.toggle('roster-cell-selected');
-//     });
-// });
-
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
     // Clear the previous list of players
@@ -586,7 +588,7 @@ boysDrawButton.addEventListener("click", () => {
         }
         
     });
-    console.log(boyPlayers);
+    //console.log(boyPlayers);
     generateBoysDraw(boyPlayers, "boysdraw");
     saveMemory(); // Save to localStorage
 });
@@ -603,7 +605,7 @@ girlsDrawButton.addEventListener("click", () => {
         }
         
     });
-    console.log(girlPlayers);
+    //console.log(girlPlayers);
     generateGirlsDraw(girlPlayers, "girlsdraw");
     saveMemory(); // Save to localStorage
 });
@@ -688,7 +690,7 @@ addButton.addEventListener("click", () => {
     entryBox.value = "";
 
     // Log attendance memory
-    console.log("Add button:", columnIndex, boyAttendance, girlAttendance);
+    // console.log("Add button:", columnIndex, boyAttendance, girlAttendance);
     saveMemory();
 });
 
@@ -721,7 +723,7 @@ removeButton.addEventListener("click", () => {
 
     // Log attendance memory
     saveMemory();
-    console.log("Remove button:", boyAttendance, girlAttendance);
+    //console.log("Remove button:", boyAttendance, girlAttendance);
     
 });
 
