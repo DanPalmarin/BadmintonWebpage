@@ -163,7 +163,7 @@ button:hover {
 }
 
 /* Stack buttons vertically on small screens */
-@media (max-width: 425px) {
+@media (max-width: 768px) {
     .button-container {
         flex-direction: column;  /* Stack buttons vertically */
         align-items: center;     /* Center buttons horizontally */
@@ -176,7 +176,7 @@ button:hover {
 }
 
 /* Scale font on mobile*/
-@media (max-width: 425px) {
+@media (max-width: 768px) {
     .entry-box,
     label,
     button {
