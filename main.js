@@ -570,7 +570,7 @@ let girlPlayers = [];
 
 // --- EVENT LISTENERS ---
 // Making the attendance table clickable for all present and future names
-roster.addEventListener("click", (event) => {
+roster.addEventListener("pointerdown", (event) => {
     if (event.target.tagName === "TD") {
         event.target.classList.toggle('roster-cell-selected');
     }
@@ -727,16 +727,30 @@ removeButton.addEventListener("click", () => {
     
 });
 
-// Reset button
+// Clear attendance button
+attendanceButton.addEventListener("click", () => {
+    // Ask for confirmation
+    const confirmation = confirm("This clears all attendance. Are you sure you wish to proceed? ");
+
+    if (!confirmation) return;
+
+    boyAttendance = [];
+    girlAttendance = [];
+
+    const tbody = roster.tBodies[0]; // Get the first <tbody>
+    while (tbody.rows.length > 0) {
+        tbody.deleteRow(0); // Always delete the first row until none are left
+    }
+
+});
+
+// Clear draws button
 resetButton.addEventListener("click", () => {
     // Ask for confirmation
     const confirmation = confirm("This clears all data and memory! Are you sure you want to reset and erase everything? ");
 
     if (!confirmation) return;
 
-    
-    boyAttendance = [];
-    girlAttendance = [];
     boysMemory = {};
     girlsMemory = {};
     boyPlayers = [];
