@@ -217,9 +217,9 @@ button:hover {
     background-color: lightgray;
 }
 
-.roster-container::-webkit-scrollbar {
-    height: 8px; /* Adjust scrollbar thickness */
-    display: block; /* Ensures visibility */
+/* .roster-container::-webkit-scrollbar {
+    height: 8px;
+    display: block;
 }
 
 .roster-container::-webkit-scrollbar-thumb {
@@ -229,7 +229,7 @@ button:hover {
 
 .roster-container::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
+} */
 
 /* Scale font on mobile*/
 @media (max-width: 425px) {
