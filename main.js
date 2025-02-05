@@ -500,16 +500,20 @@ function drawResults(memory, tableBodyId) {
 
     // Loop through each game in memory
     for (const [gameIndex, gameData] of Object.entries(memory)) {
-        for (const [key, value] of Object.entries(gameData)) {
-            // Skip Game keys
-            if (key.startsWith("Game")) continue;
-
-            // Initialize player stats if not already present
+        // Get player results in the current game
+        const playerResults = Object.entries(gameData).filter(([key]) => !key.startsWith("Game")); // Ignore "GameX" keys
+    
+        // Check if all players have false (both lost; i.e. the game hasn't been played)
+        const allFalse = playerResults.every(([, value]) => value === false);
+    
+        if (allFalse) continue; // Skip empty games
+        
+        // Update the win/loss for each completed game
+        for (const [key, value] of playerResults) {
+            //Make a player if they already don't exist
             if (!playerStats[key]) {
                 playerStats[key] = { wins: 0, losses: 0 };
             }
-
-            // Update stats based on win/lose status
             if (value === true) {
                 playerStats[key].wins += 1;
             } else if (value === false) {
@@ -517,6 +521,7 @@ function drawResults(memory, tableBodyId) {
             }
         }
     }
+    
 
     // Convert the object into an array of [key, value] pairs
     const sortedPlayerStats = Object.entries(playerStats).sort(([, a], [, b]) => b.wins - a.wins);
