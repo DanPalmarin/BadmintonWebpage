@@ -117,7 +117,12 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         
         //  --- Game cell (table data - td) numbers ---
         const gameCell = document.createElement("td");
-        gameCell.textContent = index + 1 // Sets the text to be 1 more than index
+        gameCell.classList.add("game-cell");
+        const gameButton = document.createElement("button");
+        gameButton.classList.add("game-button");
+        gameButton.textContent = index + 1;
+        gameCell.appendChild(gameButton)
+        //gameCell.textContent = index + 1 // Sets the text to be 1 more than index
         row.appendChild(gameCell);
 
         // --- Match cell (2 buttons) ---
@@ -159,26 +164,36 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
 
         // EVENT: Add click event to toggle winner selection
         player1Button.addEventListener("click", () => {
-            // If player1 is selected, mark it using CSS
-            // Deselect player2 button so only one is styled
-            player1Button.classList.add("selected");
-            player2Button.classList.remove("selected");
-            
-            // MEMORY UPDATE
-            boysMemory[index+1][player1] = true;
-            boysMemory[index+1][player2] = false;
+            const isSelected = player1Button.classList.contains("selected");
+        
+            if (isSelected) {
+                player1Button.classList.remove("selected");
+                boysMemory[index + 1][player1] = false; // Toggle back to default
+            } else {
+                player1Button.classList.add("selected");
+                player2Button.classList.remove("selected");
+        
+                boysMemory[index + 1][player1] = true;
+                boysMemory[index + 1][player2] = false;
+            }
+        
             saveMemory();
         });
 
         player2Button.addEventListener("click", () => {
-            // If player2 is selected, mark it using CSS
-            // Deselect player1 button so only one is styled
-            player2Button.classList.add("selected");
-            player1Button.classList.remove("selected");
-
-            // MEMORY UPDATE
-            boysMemory[index+1][player2] = true;
-            boysMemory[index+1][player1] = false;
+            const isSelected = player2Button.classList.contains("selected");
+        
+            if (isSelected) {
+                player2Button.classList.remove("selected");
+                boysMemory[index + 1][player2] = false; // Toggle back to default
+            } else {
+                player2Button.classList.add("selected");
+                player1Button.classList.remove("selected");
+        
+                boysMemory[index + 1][player2] = true;
+                boysMemory[index + 1][player1] = false;
+            }
+        
             saveMemory();
         });
 
@@ -443,26 +458,36 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
 
         // EVENT: Add click event to toggle winner selection
         player1Button.addEventListener("click", () => {
-            // If player1 is selected, mark it using CSS
-            // Deselect player2 button so only one is styled
-            player1Button.classList.add("selected");
-            player2Button.classList.remove("selected");
-            
-            // MEMORY UPDATE
-            girlsMemory[index+1][player1] = true;
-            girlsMemory[index+1][player2] = false;
+            const isSelected = player1Button.classList.contains("selected");
+        
+            if (isSelected) {
+                player1Button.classList.remove("selected");
+                girlsMemory[index + 1][player1] = false; // Toggle back to default
+            } else {
+                player1Button.classList.add("selected");
+                player2Button.classList.remove("selected");
+        
+                girlsMemory[index + 1][player1] = true;
+                girlsMemory[index + 1][player2] = false;
+            }
+        
             saveMemory();
         });
 
         player2Button.addEventListener("click", () => {
-            // If player2 is selected, mark it using CSS
-            // Deselect player1 button so only one is styled
-            player2Button.classList.add("selected");
-            player1Button.classList.remove("selected");
-
-            // MEMORY UPDATE
-            girlsMemory[index+1][player2] = true;
-            girlsMemory[index+1][player1] = false;
+            const isSelected = player2Button.classList.contains("selected");
+        
+            if (isSelected) {
+                player2Button.classList.remove("selected");
+                girlsMemory[index + 1][player2] = false; // Toggle back to default
+            } else {
+                player2Button.classList.add("selected");
+                player1Button.classList.remove("selected");
+        
+                girlsMemory[index + 1][player2] = true;
+                girlsMemory[index + 1][player1] = false;
+            }
+        
             saveMemory();
         });
 

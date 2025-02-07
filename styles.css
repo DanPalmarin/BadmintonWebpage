@@ -300,6 +300,18 @@ th {
  Styles the unique cells of the boys and
  girls draw tables
  ****************************************/
+ .game-cell {
+    padding: 5px;
+ }
+ .game-button {
+    padding: 5px;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+ }
+
  .winner-button {
     padding: 10px 30px;
     margin: 5px 5px;
