@@ -182,59 +182,98 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
             saveMemory();
         });
 
-        // --- Scores cell (6 entry boxes) ---
+        // --- Scores cell (2 entry boxes) ---
         const scoresCell = document.createElement("td");
         scoresCell.className = 'scoresCell'
         const scoresContainer = document.createElement("div");
+        scoresContainer.className = 'scores-container';
 
-        // Add three rows of inputs
-        for (let i = 1; i <= 3; i++) {
-            const scoreRow = document.createElement('div');
-            scoreRow.style.display = 'flex';
-            scoreRow.style.alignItems = 'center';
-            scoreRow.style.gap = '5px';
+        const scoreInput1 = document.createElement('input');
+        scoreInput1.inputMode = 'numeric';
+        scoreInput1.className = 'score-input';
+        scoreInput1.maxLength = 2;
 
-            const scoreInput1 = document.createElement('input');
-            scoreInput1.inputMode = 'numeric';
-            scoreInput1.className = 'score-input';
-            scoreInput1.maxLength = 2;
+        const dash = document.createElement('span');
+        dash.className = 'dash';
+        dash.textContent = '-';
 
-            const dash = document.createElement('span');
-            dash.className = 'dash';
-            dash.textContent = '-';
+        const scoreInput2 = document.createElement('input');
+        scoreInput2.inputMode = 'numeric';
+        scoreInput2.className = 'score-input';
+        scoreInput2.maxLength = 2;
 
-            const scoreInput2 = document.createElement('input');
-            scoreInput2.inputMode = 'numeric';
-            scoreInput2.className = 'score-input';
-            scoreInput2.maxLength = 2;
+        scoresContainer.appendChild(scoreInput1);
+        scoresContainer.appendChild(dash);
+        scoresContainer.appendChild(scoreInput2);
 
-            // MEMORY UPDATE
-            scoreInput1.addEventListener('input', () => {
-                boysMemory[index+1][`Game${i}`][0] = scoreInput1.value;
-                saveMemory();
-            });
+        // MEMORY UPDATE
+        scoreInput1.addEventListener('input', () => {
+            boysMemory[index+1][`Game1`][0] = scoreInput1.value;
+            saveMemory();
+        });
 
-            // MEMORY UPDATE
-            scoreInput2.addEventListener('input', () => {
-                boysMemory[index+1][`Game${i}`][1] = scoreInput2.value;
-                saveMemory();
-            });
+        // MEMORY UPDATE
+        scoreInput2.addEventListener('input', () => {
+            boysMemory[index+1][`Game1`][1] = scoreInput2.value;
+            saveMemory();
+        });
 
-            scoreRow.appendChild(scoreInput1);
-            scoreRow.appendChild(dash);
-            scoreRow.appendChild(scoreInput2);
-
-            // Use existingData to restore previous scores if exists
-            for (const game in existingData) {
-                if ((player1 in existingData[game]) && (player2 in existingData[game])) {
-                    scoreRow.querySelectorAll(".score-input")[0].value = existingData[game][`Game${i}`][0];
-                    scoreRow.querySelectorAll(".score-input")[1].value = existingData[game][`Game${i}`][1];
-                }
+        // Use existingData to restore previous scores if exists
+        for (const game in existingData) {
+            if ((player1 in existingData[game]) && (player2 in existingData[game])) {
+                scoresContainer.querySelectorAll(".score-input")[0].value = existingData[game][`Game1`][0];
+                scoresContainer.querySelectorAll(".score-input")[1].value = existingData[game][`Game1`][1];
             }
-            
-            // Add the row of two entry boxes to the row container
-            scoresContainer.appendChild(scoreRow);
         }
+        
+        // Add three rows of inputs
+        // for (let i = 1; i <= 1; i++) {
+        //     const scoreRow = document.createElement('div');
+        //     scoreRow.style.display = 'flex';
+        //     scoreRow.style.alignItems = 'center';
+        //     scoreRow.style.gap = '5px';
+
+        //     const scoreInput1 = document.createElement('input');
+        //     scoreInput1.inputMode = 'numeric';
+        //     scoreInput1.className = 'score-input';
+        //     scoreInput1.maxLength = 2;
+
+        //     const dash = document.createElement('span');
+        //     dash.className = 'dash';
+        //     dash.textContent = '-';
+
+        //     const scoreInput2 = document.createElement('input');
+        //     scoreInput2.inputMode = 'numeric';
+        //     scoreInput2.className = 'score-input';
+        //     scoreInput2.maxLength = 2;
+
+        //     // MEMORY UPDATE
+        //     scoreInput1.addEventListener('input', () => {
+        //         boysMemory[index+1][`Game${i}`][0] = scoreInput1.value;
+        //         saveMemory();
+        //     });
+
+        //     // MEMORY UPDATE
+        //     scoreInput2.addEventListener('input', () => {
+        //         boysMemory[index+1][`Game${i}`][1] = scoreInput2.value;
+        //         saveMemory();
+        //     });
+
+        //     scoreRow.appendChild(scoreInput1);
+        //     scoreRow.appendChild(dash);
+        //     scoreRow.appendChild(scoreInput2);
+
+        //     // Use existingData to restore previous scores if exists
+        //     for (const game in existingData) {
+        //         if ((player1 in existingData[game]) && (player2 in existingData[game])) {
+        //             scoreRow.querySelectorAll(".score-input")[0].value = existingData[game][`Game${i}`][0];
+        //             scoreRow.querySelectorAll(".score-input")[1].value = existingData[game][`Game${i}`][1];
+        //         }
+        //     }
+            
+        //     // Add the row of two entry boxes to the row container
+        //     scoresContainer.appendChild(scoreRow);
+        // }
 
         scoresCell.appendChild(scoresContainer);
         row.appendChild(scoresCell);
@@ -427,59 +466,98 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             saveMemory();
         });
 
-        // --- Scores cell (6 entry boxes) ---
+        // --- Scores cell (2 entry boxes) ---
         const scoresCell = document.createElement("td");
         scoresCell.className = 'scoresCell'
         const scoresContainer = document.createElement("div");
+        scoresContainer.className = 'scores-container';
+
+        const scoreInput1 = document.createElement('input');
+        scoreInput1.inputMode = 'numeric';
+        scoreInput1.className = 'score-input';
+        scoreInput1.maxLength = 2;
+
+        const dash = document.createElement('span');
+        dash.className = 'dash';
+        dash.textContent = '-';
+
+        const scoreInput2 = document.createElement('input');
+        scoreInput2.inputMode = 'numeric';
+        scoreInput2.className = 'score-input';
+        scoreInput2.maxLength = 2;
+
+        scoresContainer.appendChild(scoreInput1);
+        scoresContainer.appendChild(dash);
+        scoresContainer.appendChild(scoreInput2);
+
+        // MEMORY UPDATE
+        scoreInput1.addEventListener('input', () => {
+            girlsMemory[index+1][`Game1`][0] = scoreInput1.value;
+            saveMemory();
+        });
+
+        // MEMORY UPDATE
+        scoreInput2.addEventListener('input', () => {
+            girlsMemory[index+1][`Game1`][1] = scoreInput2.value;
+            saveMemory();
+        });
+
+        // Use existingData to restore previous scores if exists
+        for (const game in existingData) {
+            if ((player1 in existingData[game]) && (player2 in existingData[game])) {
+                scoresContainer.querySelectorAll(".score-input")[0].value = existingData[game][`Game1`][0];
+                scoresContainer.querySelectorAll(".score-input")[1].value = existingData[game][`Game1`][1];
+            }
+        }
 
         // Add three rows of inputs
-        for (let i = 1; i <= 3; i++) {
-            const scoreRow = document.createElement('div');
-            scoreRow.style.display = 'flex';
-            scoreRow.style.alignItems = 'center';
-            scoreRow.style.gap = '5px';
+        // for (let i = 1; i <= 3; i++) {
+        //     const scoreRow = document.createElement('div');
+        //     scoreRow.style.display = 'flex';
+        //     scoreRow.style.alignItems = 'center';
+        //     scoreRow.style.gap = '5px';
 
-            const scoreInput1 = document.createElement('input');
-            scoreInput1.inputMode = 'numeric';
-            scoreInput1.className = 'score-input';
-            scoreInput1.maxLength = 2;
+        //     const scoreInput1 = document.createElement('input');
+        //     scoreInput1.inputMode = 'numeric';
+        //     scoreInput1.className = 'score-input';
+        //     scoreInput1.maxLength = 2;
 
-            const dash = document.createElement('span');
-            dash.className = 'dash';
-            dash.textContent = '-';
+        //     const dash = document.createElement('span');
+        //     dash.className = 'dash';
+        //     dash.textContent = '-';
 
-            const scoreInput2 = document.createElement('input');
-            scoreInput2.inputMode = 'numeric';
-            scoreInput2.className = 'score-input';
-            scoreInput2.maxLength = 2;
+        //     const scoreInput2 = document.createElement('input');
+        //     scoreInput2.inputMode = 'numeric';
+        //     scoreInput2.className = 'score-input';
+        //     scoreInput2.maxLength = 2;
 
-            // MEMORY UPDATE
-            scoreInput1.addEventListener('input', () => {
-                girlsMemory[index+1][`Game${i}`][0] = scoreInput1.value;
-                saveMemory();
-            });
+        //     // MEMORY UPDATE
+        //     scoreInput1.addEventListener('input', () => {
+        //         girlsMemory[index+1][`Game${i}`][0] = scoreInput1.value;
+        //         saveMemory();
+        //     });
 
-            // MEMORY UPDATE
-            scoreInput2.addEventListener('input', () => {
-                girlsMemory[index+1][`Game${i}`][1] = scoreInput2.value;
-                saveMemory();
-            });
+        //     // MEMORY UPDATE
+        //     scoreInput2.addEventListener('input', () => {
+        //         girlsMemory[index+1][`Game${i}`][1] = scoreInput2.value;
+        //         saveMemory();
+        //     });
 
-            scoreRow.appendChild(scoreInput1);
-            scoreRow.appendChild(dash);
-            scoreRow.appendChild(scoreInput2);
+        //     scoreRow.appendChild(scoreInput1);
+        //     scoreRow.appendChild(dash);
+        //     scoreRow.appendChild(scoreInput2);
 
-            // Use existingData to restore previous scores if exists
-            for (const game in existingData) {
-                if ((player1 in existingData[game]) && (player2 in existingData[game])) {
-                    scoreRow.querySelectorAll(".score-input")[0].value = existingData[game][`Game${i}`][0];
-                    scoreRow.querySelectorAll(".score-input")[1].value = existingData[game][`Game${i}`][1];
-                }
-            }
+        //     // Use existingData to restore previous scores if exists
+        //     for (const game in existingData) {
+        //         if ((player1 in existingData[game]) && (player2 in existingData[game])) {
+        //             scoreRow.querySelectorAll(".score-input")[0].value = existingData[game][`Game${i}`][0];
+        //             scoreRow.querySelectorAll(".score-input")[1].value = existingData[game][`Game${i}`][1];
+        //         }
+        //     }
             
-            // Add the row of two entry boxes to the row container
-            scoresContainer.appendChild(scoreRow);
-        }
+        //     // Add the row of two entry boxes to the row container
+        //     scoresContainer.appendChild(scoreRow);
+        // }
 
         scoresCell.appendChild(scoresContainer);
         row.appendChild(scoresCell);

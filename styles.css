@@ -194,6 +194,10 @@ button:hover {
     margin: 10px 0px;
 }
 
+#roster td:first-child {
+    width: 50%;
+}
+
 #roster th, #roster td {
     border: 1px solid #ddd;
     padding: 5px;
@@ -251,10 +255,24 @@ table {
 }
 
 th, td {
-    padding: 8px;
+    padding: 5px;
     text-align: center;
     border: 1px solid #ddd;
 }
+
+#boys-draw td:first-child,
+#girls-draw td:first-child { /* Game number column */
+    width: 10%; /* Reduce space */
+}
+
+#boys-draw th:nth-child(3), 
+#boys-draw td:nth-child(3),
+#girls-draw th:nth-child(3), 
+#girls-draw td:nth-child(3) { 
+    width: 35%; /* Match column width */
+}
+
+
 
 th {
     background-color: #007BFF;
@@ -287,6 +305,19 @@ th {
     margin: 5px 5px;
  }
  
+/* Changing amount of space around button text on big vs small screens */
+@media (max-width: 768px) {
+    .winner-button {
+        padding: 5px 2px;
+        margin: 0px 2px;
+     }
+}
+
+ td:has(.winner-button) {
+    display: flex;
+    justify-content: center; /* Centers buttons horizontally */
+}
+
 .winner-button.selected {
     background-color: #28a745;
     color: white;
@@ -307,20 +338,18 @@ th {
 }
 
 .scoresCell {
-    display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 10px; /* Optional: add padding to ensure spacing */
+    padding: 0px; /* Optional: add padding to ensure spacing */
     height: 100%; /* Ensure it's at least as tall as the content */
 }
 
-.scoresCell > div {
-    display: flex;
-    flex-direction: column;
+.score-container {
     justify-content: center;
     align-items: center;
-    gap: 10px; /* Space between rows */
+    padding: 0px;
+    margin: 0px;
 }
 
 .score-input {
@@ -330,6 +359,19 @@ th {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+}
+
+/* Changing the size of the inputs on big vs small screens */
+@media (max-width: 768px) {
+    .score-input {
+        width: 35px;
+        padding: 5px 0px;
+        margin: 0px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 2px;
+        font-size: 0.8rem;
+    }
 }
 
 .score-input:focus {
