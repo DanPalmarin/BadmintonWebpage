@@ -51,8 +51,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                 [player1]: false,
                 [player2]: false,
                 Game1: game1 || [null, null],
-                Game2: game2 || [null, null],
-                Game3: game3 || [null, null],
+                Completed: false
             };
 
             // Set the winner as true if possible
@@ -68,13 +67,12 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                 [player1]: false,
                 [player2]: false,
                 Game1: [null, null],
-                Game2: [null, null],
-                Game3: [null, null],
+                Completed: false
             };
 
             // Restore previous data if it exists
             for (const game in existingData) {
-                const existingPlayers = Object.keys(existingData[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3');
+                const existingPlayers = Object.keys(existingData[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3' && key !== 'Completed');
                 const [existingPlayer1, existingPlayer2] = existingPlayers;
 
                 if ((existingPlayer1 === player1 && existingPlayer2 === player2) ||
@@ -84,19 +82,21 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                     boysMemory[index + 1].Game1 = existingData[game].Game1;
                     boysMemory[index + 1].Game2 = existingData[game].Game2;
                     boysMemory[index + 1].Game3 = existingData[game].Game3;
+                    boysMemory[index + 1].Completed = existingData[game].Completed;
                 }
             }
         });
     } else {
         // If it's being restored, populate `existingData` from boysMemory
         for (const game in boysMemory) {
-            const [player1, player2] = Object.keys(boysMemory[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3');
+            const [player1, player2] = Object.keys(boysMemory[game]).filter(key => key !== 'Game1' && key !== 'Game2' && key !== 'Game3' && key !== 'Completed');
             existingData[game] = {
                 [player1]: boysMemory[game][player1],
                 [player2]: boysMemory[game][player2],
                 Game1: boysMemory[game].Game1,
                 Game2: boysMemory[game].Game2,
                 Game3: boysMemory[game].Game3,
+                Completed: boysMemory[game].Completed
             };
         }
 
@@ -121,9 +121,33 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         const gameButton = document.createElement("button");
         gameButton.classList.add("game-button");
         gameButton.textContent = index + 1;
+        
+        // Use existingData to restore previous game button state if it exists
+        const savedGame = existingData[index + 1]; // Ensure correct index lookup
+        if (savedGame && savedGame["Completed"] === true) {
+            gameButton.classList.add("selected");
+        } else {
+            gameButton.classList.remove("selected");
+        }
+
+        
         gameCell.appendChild(gameButton)
-        //gameCell.textContent = index + 1 // Sets the text to be 1 more than index
         row.appendChild(gameCell);
+
+        // EVENT: Add click event to toggle winner selection
+        gameButton.addEventListener("click", () => {
+            console.log(boysMemory);
+            const isSelected = gameButton.classList.contains("selected");
+        
+            if (isSelected) {
+                gameButton.classList.remove("selected");
+                boysMemory[index + 1]["Completed"] = false; // Toggle back to default
+            } else {
+                gameButton.classList.add("selected");
+                boysMemory[index + 1]["Completed"] = true;
+            }
+            saveMemory();
+        });
 
         // --- Match cell (2 buttons) ---
         const winnerCell = document.createElement("td");
@@ -240,55 +264,6 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
                 scoresContainer.querySelectorAll(".score-input")[1].value = existingData[game][`Game1`][1];
             }
         }
-        
-        // Add three rows of inputs
-        // for (let i = 1; i <= 1; i++) {
-        //     const scoreRow = document.createElement('div');
-        //     scoreRow.style.display = 'flex';
-        //     scoreRow.style.alignItems = 'center';
-        //     scoreRow.style.gap = '5px';
-
-        //     const scoreInput1 = document.createElement('input');
-        //     scoreInput1.inputMode = 'numeric';
-        //     scoreInput1.className = 'score-input';
-        //     scoreInput1.maxLength = 2;
-
-        //     const dash = document.createElement('span');
-        //     dash.className = 'dash';
-        //     dash.textContent = '-';
-
-        //     const scoreInput2 = document.createElement('input');
-        //     scoreInput2.inputMode = 'numeric';
-        //     scoreInput2.className = 'score-input';
-        //     scoreInput2.maxLength = 2;
-
-        //     // MEMORY UPDATE
-        //     scoreInput1.addEventListener('input', () => {
-        //         boysMemory[index+1][`Game${i}`][0] = scoreInput1.value;
-        //         saveMemory();
-        //     });
-
-        //     // MEMORY UPDATE
-        //     scoreInput2.addEventListener('input', () => {
-        //         boysMemory[index+1][`Game${i}`][1] = scoreInput2.value;
-        //         saveMemory();
-        //     });
-
-        //     scoreRow.appendChild(scoreInput1);
-        //     scoreRow.appendChild(dash);
-        //     scoreRow.appendChild(scoreInput2);
-
-        //     // Use existingData to restore previous scores if exists
-        //     for (const game in existingData) {
-        //         if ((player1 in existingData[game]) && (player2 in existingData[game])) {
-        //             scoreRow.querySelectorAll(".score-input")[0].value = existingData[game][`Game${i}`][0];
-        //             scoreRow.querySelectorAll(".score-input")[1].value = existingData[game][`Game${i}`][1];
-        //         }
-        //     }
-            
-        //     // Add the row of two entry boxes to the row container
-        //     scoresContainer.appendChild(scoreRow);
-        // }
 
         scoresCell.appendChild(scoresContainer);
         row.appendChild(scoresCell);
@@ -350,8 +325,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
                 [player1]: false,
                 [player2]: false,
                 Game1: game1 || [null, null],
-                Game2: game2 || [null, null],
-                Game3: game3 || [null, null],
+                Completed: false
             };
 
             // Set the winner as true if possible
@@ -367,8 +341,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
                 [player1]: false,
                 [player2]: false,
                 Game1: [null, null],
-                Game2: [null, null],
-                Game3: [null, null],
+                Completed: false
             };
 
             // Restore previous data if it exists
@@ -383,6 +356,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
                     girlsMemory[index + 1].Game1 = existingData[game].Game1;
                     girlsMemory[index + 1].Game2 = existingData[game].Game2;
                     girlsMemory[index + 1].Game3 = existingData[game].Game3;
+                    girlsMemory[index + 1].Completed = existingData[game].Completed;
                 }
             }
         });
@@ -396,6 +370,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
                 Game1: girlsMemory[game].Game1,
                 Game2: girlsMemory[game].Game2,
                 Game3: girlsMemory[game].Game3,
+                Completed: girlsMemory[game].Completed
             };
         }
 
@@ -416,8 +391,37 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         
         //  --- Game cell (table data - td) numbers ---
         const gameCell = document.createElement("td");
-        gameCell.textContent = index + 1 // Sets the text to be 1 more than index
+        gameCell.classList.add("game-cell");
+        const gameButton = document.createElement("button");
+        gameButton.classList.add("game-button");
+        gameButton.textContent = index + 1;
+        
+        // Use existingData to restore previous game button state if it exists
+        const savedGame = existingData[index + 1]; // Ensure correct index lookup
+        if (savedGame && savedGame["Completed"] === true) {
+            gameButton.classList.add("selected");
+        } else {
+            gameButton.classList.remove("selected");
+        }
+
+        
+        gameCell.appendChild(gameButton)
         row.appendChild(gameCell);
+
+        // EVENT: Add click event to toggle winner selection
+        gameButton.addEventListener("click", () => {
+            console.log(girlsMemory);
+            const isSelected = gameButton.classList.contains("selected");
+        
+            if (isSelected) {
+                gameButton.classList.remove("selected");
+                girlsMemory[index + 1]["Completed"] = false; // Toggle back to default
+            } else {
+                gameButton.classList.add("selected");
+                girlsMemory[index + 1]["Completed"] = true;
+            }
+            saveMemory();
+        });
 
         // --- Match cell (2 buttons) ---
         const winnerCell = document.createElement("td");

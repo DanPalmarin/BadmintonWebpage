@@ -312,6 +312,11 @@ th {
     border-radius: 0;
  }
 
+ .game-button.selected {
+    background-color: #FF7043; /* Coral */
+    color: white;
+}
+
  .winner-button {
     padding: 10px 30px;
     margin: 5px 5px;
