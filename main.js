@@ -748,46 +748,6 @@ addButton.addEventListener("click", () => {
         return; // Exit
     }
 
-    // Function to create a trash icon for removing names
-    function createDeleteIcon(cell) {
-        const deleteIcon = document.createElement("span");
-        deleteIcon.textContent = "🗑️";
-        deleteIcon.classList.add("delete-icon");
-        deleteIcon.style.display = "none"; // Initially hidden
-
-        deleteIcon.addEventListener("click", () => {
-            if (confirm("Remove this player?")) {
-                // Get the name without the trash icon
-                const nameOnly = cell.textContent.replace("🗑️", "").trim();
-
-                // Update memory first
-                if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
-                    boyAttendance = boyAttendance.filter(name => name !== nameOnly);
-                } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
-                    girlAttendance = girlAttendance.filter(name => name !== nameOnly);
-                }
-
-                // Clear the cell and check if the row needs to be deleted
-                cell.textContent = "";
-
-                // Check if both Boy and Girl cells in the same row are empty
-                const row = cell.parentElement;
-                const boyCell = row.children[1];  // Column 1 (Boys)
-                const girlCell = row.children[2]; // Column 2 (Girls)
-
-                // If both cells are empty, remove the row
-                if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
-                    row.remove();
-                }
-
-                // Log attendance memory after update
-                saveMemory();
-            }
-        });
-
-        return deleteIcon;
-    }
-
     // Check for an empty cell in the appropriate column
     let emptyCellFound = false;
     const rows = roster.querySelectorAll("tr");
@@ -850,7 +810,45 @@ addButton.addEventListener("click", () => {
 });
 
 
+// Function to create a trash icon for removing names
+function createDeleteIcon(cell) {
+    const deleteIcon = document.createElement("span");
+    deleteIcon.textContent = "🗑️";
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.style.display = "none"; // Initially hidden
 
+    deleteIcon.addEventListener("click", () => {
+        if (confirm("Remove this player?")) {
+            // Get the name without the trash icon
+            const nameOnly = cell.textContent.replace("🗑️", "").trim();
+
+            // Update memory first
+            if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
+                boyAttendance = boyAttendance.filter(name => name !== nameOnly);
+            } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
+                girlAttendance = girlAttendance.filter(name => name !== nameOnly);
+            }
+
+            // Clear the cell and check if the row needs to be deleted
+            cell.textContent = "";
+
+            // Check if both Boy and Girl cells in the same row are empty
+            const row = cell.parentElement;
+            const boyCell = row.children[1];  // Column 1 (Boys)
+            const girlCell = row.children[2]; // Column 2 (Girls)
+
+            // If both cells are empty, remove the row
+            if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
+                row.remove();
+            }
+
+            // Log attendance memory after update
+            saveMemory();
+        }
+    });
+
+    return deleteIcon;
+}
 
 // Remove Player(s) button
 let removeMode = false; // Track mode state
@@ -932,10 +930,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const boyCell = document.createElement('td');
         boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
+        if (boyCell.textContent !== "") {  // Check if name is not empty
+            boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
+        }
         newRow.appendChild(boyCell);
 
         const girlCell = document.createElement('td');
         girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
+        if (girlCell.textContent !== "") {  // Check if name is not empty
+            girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
+        }
         newRow.appendChild(girlCell);
 
         tbody.appendChild(newRow);
