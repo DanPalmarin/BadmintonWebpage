@@ -213,7 +213,7 @@ button:hover {
     color: white;
 }
 
-#roster td:hover {
+/* #roster td:hover {
     background-color: #ddd;
 }
 
@@ -223,7 +223,7 @@ button:hover {
 
 .roster-cell-selected {
     background-color: lightgray;
-}
+} */
 
 /* .roster-container::-webkit-scrollbar {
     height: 8px;
@@ -379,19 +379,18 @@ th {
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 16px;
 }
 
 /* Changing the size of the inputs on big vs small screens */
 @media (max-width: 768px) {
     .score-input {
         width: 35px;
-        padding: 5px 0px;
+        padding: 3px 0px;
         margin: 0px;
         text-align: center;
         border: 1px solid #ddd;
         border-radius: 2px;
-        font-size: 0.8rem;
     }
 }
 

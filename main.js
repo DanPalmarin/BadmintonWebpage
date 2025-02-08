@@ -682,11 +682,11 @@ let girlPlayers = [];
 
 // --- EVENT LISTENERS ---
 // Making the attendance table clickable for all present and future names
-roster.addEventListener("pointerdown", (event) => {
-    if (event.target.tagName === "TD") {
-        event.target.classList.toggle('roster-cell-selected');
-    }
-});
+// roster.addEventListener("pointerdown", (event) => {
+//     if (event.target.tagName === "TD") {
+//         event.target.classList.toggle('roster-cell-selected');
+//     }
+// });
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
