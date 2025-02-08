@@ -694,7 +694,7 @@ boysDrawButton.addEventListener("click", () => {
     boyPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const boy = row.children[0]?.textContent.trim();
+        const boy = row.children[1]?.textContent.trim();
         if (boy !== '') {
             boyPlayers.push(boy);
         }
@@ -711,7 +711,7 @@ girlsDrawButton.addEventListener("click", () => {
     girlPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const girl = row.children[1]?.textContent.trim();
+        const girl = row.children[2]?.textContent.trim();
         if (girl !== '') {
             girlPlayers.push(girl);
         }
@@ -742,8 +742,8 @@ addButton.addEventListener("click", () => {
         return; // Exit if no gender is selected
     }
 
-    // Determine the column to check (0 for Boys, 1 for Girls)
-    const columnIndex = selectedGender === "Boys" ? 0 : 1;
+    // Determine the column to check (1 for Boys, 2 for Girls)
+    const columnIndex = selectedGender === "Boys" ? 1 : 2;
 
     // The names must be unique to their column
     if (boyAttendance.includes(enteredText)) {
@@ -773,9 +773,17 @@ addButton.addEventListener("click", () => {
         const newRow = document.createElement("tr");
 
         // Create a cell for Boy and a cell for Girl
+        const numberCell = document.createElement("td");
         const boyCell = document.createElement("td");
         const girlCell = document.createElement("td");
 
+        // Get the current number of rows (excluding header)
+        const tbody = roster.querySelector('tbody');
+        const rowCount = tbody.querySelectorAll("tr").length + 1; // 1-based index
+
+        numberCell.textContent = rowCount; // Assign the row number
+
+        newRow.appendChild(numberCell);
         if (selectedGender === "Boys") {
             boyCell.textContent = enteredText;
             newRow.appendChild(boyCell); // Append to the row
@@ -787,14 +795,13 @@ addButton.addEventListener("click", () => {
         }
 
         // Get the tbody element and append the new row to it
-        const tbody = roster.querySelector('tbody');
         tbody.appendChild(newRow); // Append the new row to tbody
     }
 
     // Update memory
-    if (columnIndex === 0) {
+    if (columnIndex === 1) {
         boyAttendance.push(enteredText);
-    } else if (columnIndex === 1) {
+    } else if (columnIndex === 2) {
         girlAttendance.push(enteredText);
     }
 
@@ -902,6 +909,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add rows for each boy and girl
     for (let i = 0; i < maxRows; i++) {
         const newRow = document.createElement('tr');
+
+        const numberCell = document.createElement('td');
+        numberCell.textContent = i+1;
+        newRow.appendChild(numberCell);
 
         const boyCell = document.createElement('td');
         boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index

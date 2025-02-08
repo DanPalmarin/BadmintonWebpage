@@ -195,7 +195,11 @@ button:hover {
 }
 
 #roster td:first-child {
-    width: 50%;
+    width: 5%;
+}
+
+#roster td:nth-child(2) {
+    width: 47.5%;
 }
 
 #roster th, #roster td {
