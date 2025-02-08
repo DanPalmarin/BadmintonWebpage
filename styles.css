@@ -128,23 +128,46 @@ main {
     }
 }
 
-/****************************************
- Styles entry boxes, labels, and buttons
- ****************************************/
-.entry-box {
-    width: 100%;
+
+/*****************************************************
+ Styling the flexboxes/grids on the homescreen
+ *****************************************************/
+.name-gender-row {
+    display: flex; /* Enable Flexbox layout */
+    align-items: center; /* Vertically center the items */
+    gap: 20px; /* Adjust space between elements */
+}
+
+.add-remove-row {
+    display: flex; /* Enable Flexbox layout */
+    align-items: center; /* Vertically center the items */
+    gap: 5px; /* Adjust space between elements */
+}
+
+/*****************************************************
+ Styles entry boxes, labels, buttons, and radiobuttons
+ *****************************************************/
+ .entry-box {
+    width: 50%;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-right: 0px;
+    margin-bottom: 5px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
 }
 
-label {
-    margin-right: 10px;
-    font-size: 1rem;
+
+input[type="radio"] {
+    width: 20px; /* Set the size of the circle */
+    height: 20px; /* Set the size of the circle */
+    border-radius: 50%; /* Make it round */
+    border: 2px solid #4CAF50; /* Set border color */
+    background-color: #fff; /* White background */
+    position: relative;
     cursor: pointer;
 }
+
 
 button {
     padding: 10px 15px;
@@ -185,6 +208,21 @@ button:hover {
 }
 
 
+/* Specific styles for buttons/inputs when disabled */
+.disabled-mode {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+}
+
+/* Keep remove button clickable */
+#removeButton {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+
 /****************************************
  Styles the roster table
  ****************************************/
@@ -222,33 +260,6 @@ button:hover {
 .delete-icon:hover {
     color: darkred;
 }
-
-
-/* #roster td:hover {
-    background-color: #ddd;
-}
-
-#roster td {
-    cursor: pointer;
-}
-
-.roster-cell-selected {
-    background-color: lightgray;
-} */
-
-/* .roster-container::-webkit-scrollbar {
-    height: 8px;
-    display: block;
-}
-
-.roster-container::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-}
-
-.roster-container::-webkit-scrollbar-thumb:hover {
-    background: #555;
-} */
 
 /* Scale font on mobile*/
 @media (max-width: 425px) {

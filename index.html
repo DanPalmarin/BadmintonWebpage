@@ -29,20 +29,23 @@
         </div>
 
         <div id="attendance" class="tab-content">
-            <!-- Entry box -->
-            <input type="text" id="entryBox" class="entry-box" placeholder="Add a player...">
+            <div class = "name-gender-row" >
+                <!-- Entry box -->
+                <input type="text" id="entryBox" class="entry-box" placeholder="Add a player...">
 
-            <!-- Select gender -->
-            <label>
-                <input type="radio" name="gender" value="Boys" id="boy"> Boy
-            </label>
-            <label>
-                <input type="radio" name="gender" value="Girls" id="girl"> Girl
-            </label>
-            
-            <!-- Add button -->
-            <button id="addButton">Add</button>
+                <!-- Select gender -->
+                <label>
+                    <input type="radio" name="gender" value="Boys" id="boy"> Boy
+                </label>
+                <label>
+                    <input type="radio" name="gender" value="Girls" id="girl"> Girl
+                </label>
+            </div>
 
+            <div class = "add-remove-row">
+                <button id="addButton">Add</button>
+                <button id="removeButton">Remove</button>
+            </div>
         
             <!-- Roster of players trying out -->
              <div class="roster-container">
@@ -85,8 +88,6 @@
                 <button id="boysDrawButton">Make Boys Draws</button>
 
                 <button id="girlsDrawButton">Make Girls Draws</button>
-
-                <button id="removeButton">Remove Player(s)</button>
                 
                 <button id = "attendanceButton"> Clear Attendance </button>
 

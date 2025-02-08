@@ -136,7 +136,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
 
         // EVENT: Add click event to toggle winner selection
         gameButton.addEventListener("click", () => {
-            console.log(boysMemory);
+            //console.log(boysMemory);
             const isSelected = gameButton.classList.contains("selected");
         
             if (isSelected) {
@@ -410,7 +410,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
 
         // EVENT: Add click event to toggle winner selection
         gameButton.addEventListener("click", () => {
-            console.log(girlsMemory);
+            //console.log(girlsMemory);
             const isSelected = gameButton.classList.contains("selected");
         
             if (isSelected) {
@@ -817,11 +817,11 @@ function createDeleteIcon(cell) {
     deleteIcon.classList.add("delete-icon");
     deleteIcon.style.display = "none"; // Initially hidden
 
-    deleteIcon.addEventListener("click", () => {
-        if (confirm("Remove this player?")) {
-            // Get the name without the trash icon
-            const nameOnly = cell.textContent.replace("🗑️", "").trim();
+    // Get the name without the trash icon
+    const nameOnly = cell.textContent.replace("🗑️", "").trim();
 
+    deleteIcon.addEventListener("click", () => {
+        if (confirm(`Remove ${nameOnly}?`)) {
             // Update memory first
             if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
                 boyAttendance = boyAttendance.filter(name => name !== nameOnly);
@@ -857,7 +857,20 @@ removeButton.addEventListener("click", () => {
     document.querySelectorAll(".delete-icon").forEach(icon => {
         icon.style.display = removeMode ? "inline-block" : "none";
     });
-    removeButton.textContent = removeMode ? "Done Removing" : "Remove Player(s)";
+    // Change button text and background colour
+    removeButton.textContent = removeMode ? "Done" : "Remove";
+    removeButton.style.backgroundColor = removeMode ? "#FF7043" : "";
+
+    // Disable/enable all buttons and entry box  
+    document.querySelectorAll("button, input").forEach(el => {  
+        if (el !== removeButton) { // Keep the toggle button enabled  
+            el.disabled = removeMode;
+            el.classList.toggle("disabled-mode", removeMode); // Add class for styling
+        }  
+    });
+
+    // Apply gray-out effect to everything  
+    document.body.classList.toggle("grayed-out", removeMode); 
 });
 
 // Clear attendance button
