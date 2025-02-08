@@ -213,6 +213,17 @@ button:hover {
     color: white;
 }
 
+.delete-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    color: red;
+    font-size: 16px;
+}
+.delete-icon:hover {
+    color: darkred;
+}
+
+
 /* #roster td:hover {
     background-color: #ddd;
 }

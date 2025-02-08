@@ -741,12 +741,52 @@ addButton.addEventListener("click", () => {
 
     // The names must be unique to their column
     if (boyAttendance.includes(enteredText)) {
-        alert("A boy has already been added with that name.")
+        alert("A boy has already been added with that name.");
         return; // Exit
     } else if (girlAttendance.includes(enteredText)) {
-        alert("A girl has already been added with that name.")
+        alert("A girl has already been added with that name.");
         return; // Exit
-    }  
+    }
+
+    // Function to create a trash icon for removing names
+    function createDeleteIcon(cell) {
+        const deleteIcon = document.createElement("span");
+        deleteIcon.textContent = "🗑️";
+        deleteIcon.classList.add("delete-icon");
+        deleteIcon.style.display = "none"; // Initially hidden
+
+        deleteIcon.addEventListener("click", () => {
+            if (confirm("Remove this player?")) {
+                // Get the name without the trash icon
+                const nameOnly = cell.textContent.replace("🗑️", "").trim();
+
+                // Update memory first
+                if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
+                    boyAttendance = boyAttendance.filter(name => name !== nameOnly);
+                } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
+                    girlAttendance = girlAttendance.filter(name => name !== nameOnly);
+                }
+
+                // Clear the cell and check if the row needs to be deleted
+                cell.textContent = "";
+
+                // Check if both Boy and Girl cells in the same row are empty
+                const row = cell.parentElement;
+                const boyCell = row.children[1];  // Column 1 (Boys)
+                const girlCell = row.children[2]; // Column 2 (Girls)
+
+                // If both cells are empty, remove the row
+                if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
+                    row.remove();
+                }
+
+                // Log attendance memory after update
+                saveMemory();
+            }
+        });
+
+        return deleteIcon;
+    }
 
     // Check for an empty cell in the appropriate column
     let emptyCellFound = false;
@@ -757,6 +797,7 @@ addButton.addEventListener("click", () => {
         if (cell && cell.textContent.trim() === "") {
             // Fill the first empty cell with the entered text
             cell.textContent = enteredText;
+            cell.appendChild(createDeleteIcon(cell)); // Attach trash icon
             emptyCellFound = true;
             break; // Stop checking further rows
         }
@@ -780,10 +821,12 @@ addButton.addEventListener("click", () => {
         newRow.appendChild(numberCell);
         if (selectedGender === "Boys") {
             boyCell.textContent = enteredText;
+            boyCell.appendChild(createDeleteIcon(boyCell)); // Attach trash icon
             newRow.appendChild(boyCell); // Append to the row
             newRow.appendChild(girlCell); // Empty girl cell
         } else if (selectedGender === "Girls") {
             girlCell.textContent = enteredText;
+            girlCell.appendChild(createDeleteIcon(girlCell)); // Attach trash icon
             newRow.appendChild(boyCell); // Empty boy cell
             newRow.appendChild(girlCell); // Append to the row
         }
@@ -803,9 +846,11 @@ addButton.addEventListener("click", () => {
     entryBox.value = "";
 
     // Log attendance memory
-    // console.log("Add button:", columnIndex, boyAttendance, girlAttendance);
     saveMemory();
 });
+
+
+
 
 // Remove Player(s) button
 let removeMode = false; // Track mode state
