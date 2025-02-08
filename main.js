@@ -681,12 +681,6 @@ let girlPlayers = [];
 
 
 // --- EVENT LISTENERS ---
-// Making the attendance table clickable for all present and future names
-// roster.addEventListener("pointerdown", (event) => {
-//     if (event.target.tagName === "TD") {
-//         event.target.classList.toggle('roster-cell-selected');
-//     }
-// });
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
@@ -813,37 +807,14 @@ addButton.addEventListener("click", () => {
     saveMemory();
 });
 
-// Remove Selected Player(s) button
-// Note: the names in each column must be unique
+// Remove Player(s) button
+let removeMode = false; // Track mode state
 removeButton.addEventListener("click", () => {
-    // Loop through each cell and remove the text content if it's highlighted
-    document.querySelectorAll('#roster tbody td').forEach(cell => {
-        if (cell.classList.contains('roster-cell-selected')) {
-            // Update memory first
-            const nameToRemove = cell.textContent.trim();
-            if (cell.cellIndex === 0) {
-                boyAttendance = boyAttendance.filter(name => name !== nameToRemove);
-            } else if (cell.cellIndex === 1) {
-                girlAttendance = girlAttendance.filter(name => name !== nameToRemove);
-            }
-
-            cell.textContent = '';
-            cell.classList.remove('roster-cell-selected');
-        }
+    removeMode = !removeMode; // Toggle mode
+    document.querySelectorAll(".delete-icon").forEach(icon => {
+        icon.style.display = removeMode ? "inline-block" : "none";
     });
-
-    // Check if any row is empty and remove it
-    document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const [cell1, cell2] = row.children;
-        if (cell1.textContent.trim() === '' && cell2.textContent.trim() === '') {
-            row.remove();
-        }
-    });
-
-    // Log attendance memory
-    saveMemory();
-    //console.log("Remove button:", boyAttendance, girlAttendance);
-    
+    removeButton.textContent = removeMode ? "Done Removing" : "Remove Player(s)";
 });
 
 // Clear attendance button
