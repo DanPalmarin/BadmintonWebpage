@@ -688,7 +688,8 @@ boysDrawButton.addEventListener("click", () => {
     boyPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const boy = row.children[1]?.textContent.trim();
+        const boy = row.children[1]?.textContent.replace("🗑️", "").trim();
+        
         if (boy !== '') {
             boyPlayers.push(boy);
         }
@@ -705,7 +706,7 @@ girlsDrawButton.addEventListener("click", () => {
     girlPlayers = []; // Clear the array to avoid duplicates
 
     document.querySelectorAll('#roster tbody tr').forEach(row => {
-        const girl = row.children[2]?.textContent.trim();
+        const girl = row.children[2]?.textContent.replace("🗑️", "").trim();
         if (girl !== '') {
             girlPlayers.push(girl);
         }
