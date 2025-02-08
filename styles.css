@@ -177,7 +177,7 @@ button:hover {
 
 /* Scale font on mobile*/
 @media (max-width: 768px) {
-    .entry-box,
+    .entry-box::placeholder,
     label,
     button {
         font-size: 0.8rem;
