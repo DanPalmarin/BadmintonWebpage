@@ -668,6 +668,80 @@ function drawResults(memory, tableBodyId) {
 
 }
 
+// Function to create a trash icon for removing names
+function createDeleteIcon(cell) {
+    const deleteIcon = document.createElement("span");
+    deleteIcon.textContent = "🗑️";
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.style.display = "none"; // Initially hidden
+
+    // Get the name without the trash icon
+    const nameOnly = cell.textContent.replace("🗑️", "").trim();
+
+    deleteIcon.addEventListener("click", () => {
+        if (confirm(`Remove ${nameOnly}?`)) {
+            // Update memory first
+            if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
+                boyAttendance = boyAttendance.filter(name => name !== nameOnly);
+            } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
+                girlAttendance = girlAttendance.filter(name => name !== nameOnly);
+            }
+
+            // Clear the cell and check if the row needs to be deleted
+            cell.textContent = "";
+
+            // Check if both Boy and Girl cells in the same row are empty
+            const row = cell.parentElement;
+            const boyCell = row.children[1];  // Column 1 (Boys)
+            const girlCell = row.children[2]; // Column 2 (Girls)
+
+            // If both cells are empty, remove the row
+            if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
+                row.remove();
+            }
+
+            // Log attendance memory after update
+            saveMemory();
+        }
+    });
+
+    return deleteIcon;
+}
+
+// Download the results as a CSV
+function downloadCSV() {
+    const table = document.querySelector("#boys-results"); 
+    let csvContent = "";
+
+    // Get table headers
+    const headers = [...table.querySelectorAll("th")].map(th => `"${th.textContent.trim()}"`);
+    csvContent += headers.join(",") + "\n";
+
+    // Get table rows
+    const rows = table.querySelectorAll("tr");
+    rows.forEach((row, index) => {
+        if (index === 0) return; // Skip header row
+        const cells = [...row.querySelectorAll("td")].map(td => {
+            let text = td.textContent.trim();
+            return text.includes(" - ") ? `=" ${text}"` : `"${text}"`; // Force Excel to treat as text
+        });
+        csvContent += cells.join(",") + "\n";
+    });
+
+    // Create and download CSV
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "results.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+
+
 // Save memory to LocalStorage
 function saveMemory() {
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
@@ -731,7 +805,7 @@ addButton.addEventListener("click", () => {
 
     // Check if the entry box has some text
     if (enteredText === "") {
-        alert("Please enter some text.");
+        alert("Please enter a name.");
         return; // Exit if no text was entered
     }
 
@@ -818,45 +892,7 @@ addButton.addEventListener("click", () => {
 });
 
 
-// Function to create a trash icon for removing names
-function createDeleteIcon(cell) {
-    const deleteIcon = document.createElement("span");
-    deleteIcon.textContent = "🗑️";
-    deleteIcon.classList.add("delete-icon");
-    deleteIcon.style.display = "none"; // Initially hidden
 
-    // Get the name without the trash icon
-    const nameOnly = cell.textContent.replace("🗑️", "").trim();
-
-    deleteIcon.addEventListener("click", () => {
-        if (confirm(`Remove ${nameOnly}?`)) {
-            // Update memory first
-            if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
-                boyAttendance = boyAttendance.filter(name => name !== nameOnly);
-            } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
-                girlAttendance = girlAttendance.filter(name => name !== nameOnly);
-            }
-
-            // Clear the cell and check if the row needs to be deleted
-            cell.textContent = "";
-
-            // Check if both Boy and Girl cells in the same row are empty
-            const row = cell.parentElement;
-            const boyCell = row.children[1];  // Column 1 (Boys)
-            const girlCell = row.children[2]; // Column 2 (Girls)
-
-            // If both cells are empty, remove the row
-            if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
-                row.remove();
-            }
-
-            // Log attendance memory after update
-            saveMemory();
-        }
-    });
-
-    return deleteIcon;
-}
 
 // Remove Player(s) button
 let removeMode = false; // Track mode state
@@ -924,6 +960,9 @@ boysResultsButton.addEventListener("click", () => {
 girlsResultsButton.addEventListener("click", () => {
     let girlsResults = drawResults(girlsMemory, "girls-results-tbody");
 });
+
+boysDownloadButton.addEventListener("click", downloadCSV);
+
 
 // Load data from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", () => {
