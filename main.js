@@ -381,7 +381,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             };
         }
 
-        console.log(girlsMemory);
+        //console.log(girlsMemory);
         //girlsMemory = {};
         //console.log("2. Memory cleared!");
     }
@@ -721,7 +721,7 @@ function createDeleteIcon(cell) {
 
 // Download the results as a CSV
 function downloadCSV(memory, TableId) {
-    console.log(memory);
+    //console.log(memory);
 
     // BASIC RESULTS TABLE
     const table = document.getElementById(TableId);
