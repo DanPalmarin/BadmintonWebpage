@@ -381,6 +381,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
             };
         }
 
+        console.log(girlsMemory);
         //girlsMemory = {};
         //console.log("2. Memory cleared!");
     }
@@ -713,6 +714,8 @@ function createDeleteIcon(cell) {
 
 // Download the results as a CSV
 function downloadCSV(memory) {
+    console.log(memory);
+
     // BASIC RESULTS TABLE
     const table = document.querySelector("#boys-results"); 
     let csvContent = "";
@@ -748,8 +751,10 @@ function downloadCSV(memory) {
         // Determine the winner
         let winner = game[player1] ? player1 : game[player2] ? player2 : "None";
 
-        // Get scores if the game is completed, otherwise "n/a"
-        let scores = game.Completed ? game[`Game${gameNum}`].join(" \u2011 ") : "n/a";
+        // Ensure the game is completed and join the scores with a non-breaking hyphen
+        let scores = game.Completed && game["Game1"] && Array.isArray(game["Game1"])
+            ? game["Game1"].join("\u2011") 
+            : "n/a"; // Use non-breaking hyphen if game is completed, otherwise "n/a"
 
         // Add the row to the CSV content
         csvContent += `${gameNum},${player1} vs ${player2},${winner},${scores}\n`;
