@@ -523,6 +523,13 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
         scoreInput2.className = 'score-input';
         scoreInput2.maxLength = 2;
 
+        // Shift focus from input 1 to 2 if the user hits the 2 digit limit on input 1
+        scoreInput1.addEventListener('input', () => {
+            if (scoreInput1.value.length >= 2) {
+                scoreInput2.focus();
+            }
+        });
+
         scoresContainer.appendChild(scoreInput1);
         scoresContainer.appendChild(dash);
         scoresContainer.appendChild(scoreInput2);
@@ -986,13 +993,8 @@ resetButton.addEventListener("click", () => {
 });
 
 // Results buttons
-boysResultsButton.addEventListener("click", () => {
-    let boysResults = drawResults(boysMemory, "boys-results-tbody");
-});
-
-girlsResultsButton.addEventListener("click", () => {
-    let girlsResults = drawResults(girlsMemory, "girls-results-tbody");
-});
+//boysResultsButton.addEventListener("click", () => drawResults(boysMemory, "boys-results-tbody"));
+//girlsResultsButton.addEventListener("click", () => drawResults(girlsMemory, "girls-results-tbody"));
 
 // Results download buttons
 boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results'));
@@ -1080,6 +1082,12 @@ tabButtons.forEach(button => {
         // Activate the clicked button and show the corresponding tab content
         button.classList.add('active');
         document.getElementById(targetTab).classList.remove('hidden');
+
+        // Auto-generate results when the "Results" tab is selected
+        if (targetTab === "results") {
+            drawResults(boysMemory, "boys-results-tbody");
+            drawResults(girlsMemory, "girls-results-tbody");
+        }
     });
 });
 
