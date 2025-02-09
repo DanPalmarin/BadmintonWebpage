@@ -604,7 +604,7 @@ function generateGirlsDraw(players, tableBodyId, isRestore = false) {
     //console.log(girlsMemory);
 }
 
-// Calculate boys results
+// Calculate boys and girls results
 function drawResults(memory, tableBodyId) {
     const resultsTable = document.getElementById(tableBodyId);
 
@@ -615,7 +615,7 @@ function drawResults(memory, tableBodyId) {
     // Loop through each game in memory
     for (const [gameIndex, gameData] of Object.entries(memory)) {
         // Get player results in the current game
-        const playerResults = Object.entries(gameData).filter(([key]) => !key.startsWith("Game")); // Ignore "GameX" keys
+        const playerResults = Object.entries(gameData).filter(([key]) => !key.startsWith("Game") && key !== "Completed"); // Ignore "GameX" keys and "Completed"
     
         // Check if all players have false (both lost; i.e. the game hasn't been played)
         const allFalse = playerResults.every(([, value]) => value === false);
@@ -652,16 +652,19 @@ function drawResults(memory, tableBodyId) {
         const playerCell = document.createElement('td');
         const totalGamesCell = document.createElement('td');
         const winsCell = document.createElement('td');
+        const losesCell = document.createElement('td');
         const rankCell = document.createElement('td');
 
         playerCell.textContent = player;
         totalGamesCell.textContent = totalGames;
-        winsCell.textContent = `${wins} - ${losses}`;
+        winsCell.textContent = wins;
+        losesCell.textContent = losses;
         rankCell.textContent = rank;
 
         row.appendChild(playerCell);
         row.appendChild(totalGamesCell);
         row.appendChild(winsCell);
+        row.appendChild(losesCell);
         row.appendChild(rankCell);
         resultsTable.appendChild(row);
     }
@@ -709,7 +712,8 @@ function createDeleteIcon(cell) {
 }
 
 // Download the results as a CSV
-function downloadCSV() {
+function downloadCSV(memory) {
+    // BASIC RESULTS TABLE
     const table = document.querySelector("#boys-results"); 
     let csvContent = "";
 
@@ -721,12 +725,37 @@ function downloadCSV() {
     const rows = table.querySelectorAll("tr");
     rows.forEach((row, index) => {
         if (index === 0) return; // Skip header row
-        const cells = [...row.querySelectorAll("td")].map(td => {
-            let text = td.textContent.trim();
-            return text.includes(" - ") ? `=" ${text}"` : `"${text}"`; // Force Excel to treat as text
-        });
+        const cells = [...row.querySelectorAll("td")].map(td => `"${td.textContent.trim()}"`);
         csvContent += cells.join(",") + "\n";
     });
+
+    // Add blank lines between tables
+    csvContent += "\n\n\n";
+
+    // FULL GAME RESULTS TABLE
+    // Make headers
+    csvContent += "Game,Players,Winner,Scores\n";
+
+    // Iterate over each game in memory
+    Object.keys(memory).forEach(gameNum => {
+        let game = memory[gameNum];
+
+        // Dynamically extract player names from the object keys
+        const players = Object.keys(game).filter(key => key !== "Game" && key !== "Completed");
+        const player1 = players[0]; // Assuming the first player is player1
+        const player2 = players[1]; // Assuming the second player is player2
+
+        // Determine the winner
+        let winner = game[player1] ? player1 : game[player2] ? player2 : "None";
+
+        // Get scores if the game is completed, otherwise "n/a"
+        let scores = game.Completed ? game[`Game${gameNum}`].join(" \u2011 ") : "n/a";
+
+        // Add the row to the CSV content
+        csvContent += `${gameNum},${player1} vs ${player2},${winner},${scores}\n`;
+    });
+
+
 
     // Create and download CSV
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -891,9 +920,6 @@ addButton.addEventListener("click", () => {
     saveMemory();
 });
 
-
-
-
 // Remove Player(s) button
 let removeMode = false; // Track mode state
 removeButton.addEventListener("click", () => {
@@ -961,8 +987,9 @@ girlsResultsButton.addEventListener("click", () => {
     let girlsResults = drawResults(girlsMemory, "girls-results-tbody");
 });
 
-boysDownloadButton.addEventListener("click", downloadCSV);
-
+// Results download buttons
+boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory));
+girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory));
 
 // Load data from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", () => {
