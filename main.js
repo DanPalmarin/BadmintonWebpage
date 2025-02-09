@@ -713,11 +713,11 @@ function createDeleteIcon(cell) {
 }
 
 // Download the results as a CSV
-function downloadCSV(memory) {
+function downloadCSV(memory, TableId) {
     console.log(memory);
 
     // BASIC RESULTS TABLE
-    const table = document.querySelector("#boys-results"); 
+    const table = document.getElementById(TableId);
     let csvContent = "";
 
     // Get table headers
@@ -751,10 +751,12 @@ function downloadCSV(memory) {
         // Determine the winner
         let winner = game[player1] ? player1 : game[player2] ? player2 : "None";
 
-        // Ensure the game is completed and join the scores with a non-breaking hyphen
-        let scores = game.Completed && game["Game1"] && Array.isArray(game["Game1"])
-            ? game["Game1"].join("\u2011") 
-            : "n/a"; // Use non-breaking hyphen if game is completed, otherwise "n/a"
+        // Handle scores
+        let scores = game["Game1"] && Array.isArray(game["Game1"])
+            ? game["Game1"].every(score => score === null) 
+                ? "Not Completed" 
+                : game["Game1"].join(" to ")
+            : "Not Completed";
 
         // Add the row to the CSV content
         csvContent += `${gameNum},${player1} vs ${player2},${winner},${scores}\n`;
@@ -993,8 +995,8 @@ girlsResultsButton.addEventListener("click", () => {
 });
 
 // Results download buttons
-boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory));
-girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory));
+boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results'));
+girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'girls-results'));
 
 // Load data from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", () => {
