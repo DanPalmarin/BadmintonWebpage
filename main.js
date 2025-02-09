@@ -241,6 +241,13 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         scoreInput2.className = 'score-input';
         scoreInput2.maxLength = 2;
 
+        // Shift focus from input 1 to 2 if the user hits the 2 digit limit on input 1
+        scoreInput1.addEventListener('input', () => {
+            if (scoreInput1.value.length >= 2) {
+                scoreInput2.focus();
+            }
+        });
+
         scoresContainer.appendChild(scoreInput1);
         scoresContainer.appendChild(dash);
         scoresContainer.appendChild(scoreInput2);
