@@ -305,6 +305,11 @@ th {
     color: white;
 }
 
+.boysdraw-container,
+.girlsdraw-container {
+    padding-bottom: 50px;
+}
+
 .roster-container,
 .boysdraw-container,
 .girlsdraw-container,
