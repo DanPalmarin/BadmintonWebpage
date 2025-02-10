@@ -720,7 +720,7 @@ function createDeleteIcon(cell) {
 }
 
 // Download the results as a CSV
-function downloadCSV(memory, TableId) {
+function downloadCSV(memory, TableId, filename) {
     //console.log(memory);
 
     // BASIC RESULTS TABLE
@@ -776,7 +776,7 @@ function downloadCSV(memory, TableId) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "results.csv";
+    a.download = `${filename}Results.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -997,8 +997,8 @@ resetButton.addEventListener("click", () => {
 //girlsResultsButton.addEventListener("click", () => drawResults(girlsMemory, "girls-results-tbody"));
 
 // Results download buttons
-boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results'));
-girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'girls-results'));
+boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results', 'boys'));
+girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'girls-results', 'girls'));
 
 // Load data from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", () => {
