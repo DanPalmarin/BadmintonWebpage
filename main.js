@@ -101,7 +101,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         }
 
         //boysMemory = {};
-        //console.log("2. Memory cleared!");
+        console.log(existingData);
     }
 
     // Clear the table
@@ -122,30 +122,47 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         gameButton.classList.add("game-button");
         gameButton.textContent = index + 1;
         
-        // Use existingData to restore previous game button state if it exists
-        const savedGame = existingData[index + 1]; // Ensure correct index lookup
-        if (savedGame && savedGame["Completed"] === true) {
-            gameButton.classList.add("selected");
-        } else {
-            gameButton.classList.remove("selected");
-        }
+        // console.log(existingData);
 
+        // Use existingData to restore previous game button state if it exists
+        // const savedGame = existingData[index + 1]; // Ensure correct index lookup
+        // console.log("Index:", index + 1);
+        // console.log("Existing data at index:", existingData[index + 1]);
+        // console.log("Completed state:", existingData[index + 1]?.["Completed"]);
+
+        // if (existingData[index + 1] && existingData[index + 1]["Completed"] === true) {
+        //     gameButton.classList.add("selected");
+        // } else {
+        //     gameButton.classList.remove("selected");
+        // }
+
+        for (const game in existingData) {
+            if (existingData[game][player1] && existingData[game][player2] && existingData[game]["Completed"] === true) {
+                gameButton.classList.add("selected");
+            } else {
+                gameButton.classList.remove("selected");
+            }
+        }
         
         gameCell.appendChild(gameButton)
         row.appendChild(gameCell);
 
         // EVENT: Add click event to toggle winner selection
         gameButton.addEventListener("click", () => {
-            //console.log(boysMemory);
             const isSelected = gameButton.classList.contains("selected");
-        
+            
+            console.log("Before toggle, isSelected:", isSelected);
+            
             if (isSelected) {
                 gameButton.classList.remove("selected");
-                boysMemory[index + 1]["Completed"] = false; // Toggle back to default
+                boysMemory[index + 1]["Completed"] = false;  // Toggle back to default
+                console.log("Updated boysMemory:", boysMemory);
             } else {
                 gameButton.classList.add("selected");
                 boysMemory[index + 1]["Completed"] = true;
+                console.log("Updated boysMemory:", boysMemory);
             }
+        
             saveMemory();
         });
 
@@ -711,6 +728,10 @@ function createDeleteIcon(cell) {
                 row.remove();
             }
 
+            // If something was removed, enable and update the button
+            // boysDrawButton.textContent = "Update Boys Draw";
+            playerRemoved = true;
+
             // Log attendance memory after update
             saveMemory();
         }
@@ -783,8 +804,6 @@ function downloadCSV(memory, TableId) {
     URL.revokeObjectURL(url);
 }
 
-
-
 // Save memory to LocalStorage
 function saveMemory() {
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
@@ -808,6 +827,9 @@ let girlPlayers = [];
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
+    // Disable the button to prevent multiple clicks
+    boysDrawButton.disabled = true;
+
     // Clear the previous list of players
     boyPlayers = []; // Clear the array to avoid duplicates
 
@@ -819,6 +841,7 @@ boysDrawButton.addEventListener("click", () => {
         }
         
     });
+
     //console.log(boyPlayers);
     generateBoysDraw(boyPlayers, "boysdraw");
     saveMemory(); // Save to localStorage
@@ -936,8 +959,13 @@ addButton.addEventListener("click", () => {
 
 // Remove Player(s) button
 let removeMode = false; // Track mode state
+let playerRemoved = false; // Track if a player was removed
 removeButton.addEventListener("click", () => {
     removeMode = !removeMode; // Toggle mode
+    if (removeMode) {
+        playerRemoved = false; // Reset flag when entering remove mode
+    }
+
     document.querySelectorAll(".delete-icon").forEach(icon => {
         icon.style.display = removeMode ? "inline-block" : "none";
     });
@@ -950,8 +978,16 @@ removeButton.addEventListener("click", () => {
         if (el !== removeButton) { // Keep the toggle button enabled  
             el.disabled = removeMode;
             el.classList.toggle("disabled-mode", removeMode); // Add class for styling
-        }  
+        }
     });
+
+    if (!removeMode) {  
+        // Only decide whether to re-enable after exiting remove mode  
+        boysDrawButton.disabled = !playerRemoved;  
+        if (playerRemoved) {
+            boysDrawButton.textContent = "Update Boys Draw";
+        }
+    }
 
     // Apply gray-out effect to everything  
     document.body.classList.toggle("grayed-out", removeMode); 

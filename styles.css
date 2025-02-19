@@ -181,6 +181,14 @@ button {
     transition: background-color 0.3s;
 }
 
+
+button:disabled {
+    background-color: #ccc; /* Light gray background */
+    color: #666;            /* Dark gray text */
+    cursor: not-allowed;    /* Change cursor to indicate it can't be clicked */
+    opacity: 0.6;           /* Make it semi-transparent */
+}
+
 button:hover {
     background-color: #0056b3;
 }
