@@ -821,12 +821,21 @@ let boysMemory = {};
 let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
-
+let removeMode = false; // Track mode state
+let playerRemoved = false; // Track if a player was removed
+let boysDrawActivated = false;
 
 // --- EVENT LISTENERS ---
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
+    // This indicates that the boys draw button has been pressed
+    // This is so we can decided whether to change the text to "Update Boys Draw" later on or not
+    // See the removeButton for its use
+    if (!boysDrawActivated) {
+        boysDrawActivated = true;
+    }
+
     // Disable the button to prevent multiple clicks
     boysDrawButton.disabled = true;
 
@@ -955,11 +964,15 @@ addButton.addEventListener("click", () => {
 
     // Log attendance memory
     saveMemory();
+
+    // If NOT in remove mode and 'Make Boys Draw' was previously pressed, update the button
+    if (!removeMode && boysDrawButton.disabled) {
+        boysDrawButton.textContent = "Update Boys Draw";
+        boysDrawButton.disabled = false;
+    }
 });
 
 // Remove Player(s) button
-let removeMode = false; // Track mode state
-let playerRemoved = false; // Track if a player was removed
 removeButton.addEventListener("click", () => {
     removeMode = !removeMode; // Toggle mode
     if (removeMode) {
@@ -984,7 +997,7 @@ removeButton.addEventListener("click", () => {
     if (!removeMode) {  
         // Only decide whether to re-enable after exiting remove mode  
         boysDrawButton.disabled = !playerRemoved;  
-        if (playerRemoved) {
+        if (playerRemoved && boysDrawActivated) {
             boysDrawButton.textContent = "Update Boys Draw";
         }
     }
@@ -1025,6 +1038,11 @@ resetButton.addEventListener("click", () => {
     boysTable.innerHTML='';
     const girlsTable = document.getElementById("girlsdraw");
     girlsTable.innerHTML='';
+
+    boysDrawButton.textContent = "Make Boys Draw";
+    boysDrawButton.disabled = false;
+    boysDrawActivated = false;
+
     localStorage.clear();
 });
 
