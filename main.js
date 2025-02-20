@@ -136,25 +136,25 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         //     gameButton.classList.remove("selected");
         // }
 
-        let foundMatch = false;
+        // let foundMatch = false;
 
-        for (const game in existingData) {
-            if (
-                existingData[game] && // Ensure game exists
-                existingData[game][player1] !== undefined && 
-                existingData[game][player2] !== undefined &&
-                existingData[game]["Completed"] === true
-            ) {
-                gameButton.classList.add("selected");
-                foundMatch = true; // Mark that we've found a match
-                break; // Stop after the first match
-            }
-        }
+        // for (const game in existingData) {
+        //     if (
+        //         existingData[game] && // Ensure game exists
+        //         existingData[game][player1] !== undefined && 
+        //         existingData[game][player2] !== undefined &&
+        //         existingData[game]["Completed"] === true
+        //     ) {
+        //         gameButton.classList.add("selected");
+        //         foundMatch = true; // Mark that we've found a match
+        //         break; // Stop after the first match
+        //     }
+        // }
 
-        // If no match was found after checking all games, remove the "selected" class
-        if (!foundMatch) {
-            gameButton.classList.remove("selected");
-        }
+        // // If no match was found after checking all games, remove the "selected" class
+        // if (!foundMatch) {
+        //     gameButton.classList.remove("selected");
+        // }
 
         
         gameCell.appendChild(gameButton)
@@ -205,9 +205,11 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
             if (existingData[game][player1] === true && existingData[game][player2] === false) {
                 player1Button.classList.add("selected");
                 player2Button.classList.remove("selected");
+                // gameButton.classList.add("selected");
             } else if (existingData[game][player2] === true && existingData[game][player1] === false) {
                 player2Button.classList.add("selected");
                 player1Button.classList.remove("selected");
+                // gameButton.classList.add("selected");
             }
         }
 
@@ -827,6 +829,40 @@ function saveMemory() {
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
 }
 
+// Remake the roster table
+function remakeRoster() {
+    // Ensure the table is restored properly
+    const tbody = roster.querySelector('tbody');
+    tbody.innerHTML = '';  // Clear existing table rows (only once)
+
+    const maxRows = Math.max(boyAttendance.length, girlAttendance.length);
+
+    // Add rows for each boy and girl
+    for (let i = 0; i < maxRows; i++) {
+        const newRow = document.createElement('tr');
+
+        const numberCell = document.createElement('td');
+        numberCell.textContent = i+1;
+        newRow.appendChild(numberCell);
+
+        const boyCell = document.createElement('td');
+        boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
+        if (boyCell.textContent !== "") {  // Check if name is not empty
+            boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
+        }
+        newRow.appendChild(boyCell);
+
+        const girlCell = document.createElement('td');
+        girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
+        if (girlCell.textContent !== "") {  // Check if name is not empty
+            girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
+        }
+        newRow.appendChild(girlCell);
+
+        tbody.appendChild(newRow);
+    }
+}
+
 // --- Global variables ---
 let boyAttendance = [];
 let girlAttendance = [];
@@ -1012,11 +1048,16 @@ removeButton.addEventListener("click", () => {
         }
     });
 
-    if (!removeMode) {  
-        // Only decide whether to re-enable after exiting remove mode  
-        boysDrawButton.disabled = !playerRemoved;  
-        if (playerRemoved && boysDrawActivated) {
-            boysDrawButton.textContent = "Update Boys Draw";
+    // Only decide whether to re-enable if a player was actually removed
+    // This is done outside of remove mode
+    // Always remake the entire table to remove any blank cells trapped
+    if (!removeMode) {
+        boysDrawButton.disabled = !playerRemoved;
+        if (playerRemoved) {
+            remakeRoster()
+            if (boysDrawActivated) {
+                boysDrawButton.textContent = "Update Boys Draw";
+            }
         }
     }
 
@@ -1082,36 +1123,8 @@ document.addEventListener("DOMContentLoaded", () => {
     boyAttendance = savedBoyAttendance;
     girlAttendance = savedGirlAttendance;
 
-    // Ensure the table is restored properly
-    const tbody = roster.querySelector('tbody');
-    tbody.innerHTML = '';  // Clear existing table rows (only once)
-
-    const maxRows = Math.max(boyAttendance.length, girlAttendance.length);
-
-    // Add rows for each boy and girl
-    for (let i = 0; i < maxRows; i++) {
-        const newRow = document.createElement('tr');
-
-        const numberCell = document.createElement('td');
-        numberCell.textContent = i+1;
-        newRow.appendChild(numberCell);
-
-        const boyCell = document.createElement('td');
-        boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
-        if (boyCell.textContent !== "") {  // Check if name is not empty
-            boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
-        }
-        newRow.appendChild(boyCell);
-
-        const girlCell = document.createElement('td');
-        girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
-        if (girlCell.textContent !== "") {  // Check if name is not empty
-            girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
-        }
-        newRow.appendChild(girlCell);
-
-        tbody.appendChild(newRow);
-    }
+    // Remake the table roster
+    remakeRoster();
 
     // --- BOYS DRAW ---
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "{}");
