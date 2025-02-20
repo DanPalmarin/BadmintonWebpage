@@ -136,13 +136,26 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         //     gameButton.classList.remove("selected");
         // }
 
+        let foundMatch = false;
+
         for (const game in existingData) {
-            if (existingData[game][player1] && existingData[game][player2] && existingData[game]["Completed"] === true) {
+            if (
+                existingData[game] && // Ensure game exists
+                existingData[game][player1] !== undefined && 
+                existingData[game][player2] !== undefined &&
+                existingData[game]["Completed"] === true
+            ) {
                 gameButton.classList.add("selected");
-            } else {
-                gameButton.classList.remove("selected");
+                foundMatch = true; // Mark that we've found a match
+                break; // Stop after the first match
             }
         }
+
+        // If no match was found after checking all games, remove the "selected" class
+        if (!foundMatch) {
+            gameButton.classList.remove("selected");
+        }
+
         
         gameCell.appendChild(gameButton)
         row.appendChild(gameCell);
@@ -151,16 +164,16 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         gameButton.addEventListener("click", () => {
             const isSelected = gameButton.classList.contains("selected");
             
-            console.log("Before toggle, isSelected:", isSelected);
+            // console.log("Before toggle, isSelected:", isSelected);
             
             if (isSelected) {
                 gameButton.classList.remove("selected");
                 boysMemory[index + 1]["Completed"] = false;  // Toggle back to default
-                console.log("Updated boysMemory:", boysMemory);
+                // console.log("Updated boysMemory:", boysMemory);
             } else {
                 gameButton.classList.add("selected");
                 boysMemory[index + 1]["Completed"] = true;
-                console.log("Updated boysMemory:", boysMemory);
+                // console.log("Updated boysMemory:", boysMemory);
             }
         
             saveMemory();
@@ -851,8 +864,13 @@ boysDrawButton.addEventListener("click", () => {
         
     });
 
-    //console.log(boyPlayers);
-    generateBoysDraw(boyPlayers, "boysdraw");
+    // If boysDrawActivated is already true and button text is "Update Boys Draw", restore previous state
+    if (boysDrawActivated && boysDrawButton.textContent === "Update Boys Draw") {
+        generateBoysDraw(boyPlayers, "boysdraw", true);
+    } else {
+        generateBoysDraw(boyPlayers, "boysdraw");
+    }
+
     saveMemory(); // Save to localStorage
 });
 
