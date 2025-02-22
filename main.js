@@ -1,5 +1,45 @@
 import { makeDraw } from './masterDraws.js';
 
+function startDraw(players, memory) {
+    const games = makeDraw(players);
+    //const tableBody = document.getElementById(tableBodyId);
+
+    // Iterate through games and modify memory in place
+    games.forEach((pair, index) => {
+        const [player1, player2] = pair;
+
+        // Find an existing game with these players
+        let existingGame = memory.find(game =>
+            game.players.includes(player1) && game.players.includes(player2)
+        );
+
+        if (!existingGame) {
+            // Insert new game at the correct index
+            memory.splice(index, 0, {
+                players: [player1, player2],
+                Game1: [null, null],
+                Completed: false
+            });
+        }
+    });
+
+    // Remove any games from memory that are no longer in games
+    for (let i = memory.length - 1; i >= 0; i--) {
+        const game = memory[i];
+        const isStillValid = games.some(pair =>
+            game.players.includes(pair[0]) && game.players.includes(pair[1])
+        );
+
+        if (!isStillValid) {
+            memory.splice(i, 1); // Remove the outdated game
+        }
+    }
+
+    console.log(games);
+    console.log(memory);
+}
+
+
 // Make boys draw
 function generateBoysDraw(players, tableBodyId, isRestore = false) {
     // Build the draw from the masterDraw module
@@ -875,6 +915,31 @@ let playerRemoved = false; // Track if a player was removed
 let boysDrawActivated = false;
 
 // --- EVENT LISTENERS ---
+
+let testMemory = [];
+
+testButton.addEventListener("click", () => {
+    if (!boysDrawActivated) {
+        boysDrawActivated = true;
+    }
+
+    // Disable the button to prevent multiple clicks
+    boysDrawButton.disabled = true;
+
+    // Clear the previous list of players
+    boyPlayers = []; // Clear the array to avoid duplicates
+
+    document.querySelectorAll('#roster tbody tr').forEach(row => {
+        const boy = row.children[1]?.textContent.replace("🗑️", "").trim();
+        
+        if (boy !== '') {
+            boyPlayers.push(boy);
+        }
+        
+    });
+
+    startDraw(boyPlayers, testMemory);
+})
 
 // Make Boys Draw button
 boysDrawButton.addEventListener("click", () => {
