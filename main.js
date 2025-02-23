@@ -1357,14 +1357,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- BOYS DRAW ---
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
     const savedBoys = JSON.parse(localStorage.getItem("boyPlayers") || "[]");
-    if (savedBoysMemory !== "[]") {
-        boysMemory = savedBoysMemory;
-        boyPlayers = savedBoys;
+    boysMemory = savedBoysMemory;
+    boyPlayers = savedBoys;
+    generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
+    // if (savedBoysMemory !== "[]") {
+    //     boysMemory = savedBoysMemory;
+    //     boyPlayers = savedBoys;
 
-        // Generate the boys draw
-        //generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
-        generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
-    }
+    //     // Generate the boys draw
+    //     //generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
+    //     generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
+    // }
 
     // --- GIRLS DRAW ---
     const savedGirlsMemory = JSON.parse(localStorage.getItem("girlsMemory") || "{}");
