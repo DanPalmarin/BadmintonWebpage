@@ -1,20 +1,20 @@
 import { makeDraw } from './masterDraws.js';
 
-function generateDraw(players, memory, key) {
+function generateDraw(players, memory, key, tableBodyId) {
     const games = makeDraw(players);
 
     // MEMORY MANAGEMENT -----------------------------------------------------------
     // Iterate through games and modify memory in place
     games.forEach((pair, index) => {
         const [player1, player2] = pair;
-        const gameKey = `${player1}-${player2}`; // Unique key for each game
 
         if (!memory[index]) {
             // If the memory doesn't have a game at this index, insert a new one
             memory[index] = {
                 players: [player1, player2],
-                Game: [null, null],
-                Completed: false
+                winner: null,
+                score: [null, null],
+                completed: false
             };
         } else {
             // Preserve existing game state while updating players
@@ -28,11 +28,120 @@ function generateDraw(players, memory, key) {
     // Remove any extra games from memory if the new draw is shorter
     memory.length = games.length;
 
-    console.log(memory);
-    
+    //console.log(memory);
+
     saveToStorage(memory, key)
     //------------------------------------------------------------------------------
 
+    // POPULATING THE DRAW TABLE ---------------------------------------------------
+    const tableBody = document.getElementById(tableBodyId);
+    tableBody.innerHTML =''; // Clears table
+
+    // Extract all data from memory
+    memory.forEach((game, index) => {
+        const row = document.createElement("tr"); // Make table row
+        const { players, winner, score, completed } = game; // players = ['player1', 'player2'], winner = null, game = [null,null], completed = true/false
+        const [player1, player2] = players; // player1 = 'player1, player2 = 'player2'
+        const gameNum = index + 1; // We start counting games at 1
+        
+        //console.log(gameNum, player1, player2, Game, Completed);
+    
+        // GAME BUTTON
+        const gameCell = document.createElement("td");
+        gameCell.classList.add("game-cell"); // Needed CSS styling
+        const gameButton = document.createElement("button");
+        gameButton.classList.add("game-button"); // Needed CSS styling
+        gameButton.textContent = gameNum;
+
+        // Decide its selected state based on memory
+        if (completed === true) {
+            gameButton.classList.add("selected");
+        } else {
+            gameButton.classList.remove("selected");
+        }
+
+        // EVENT: Add click event to toggle if the game is completed or not
+        gameButton.addEventListener("click", () => {
+            const isSelected = gameButton.classList.contains("selected"); // Get current state of button
+            
+            // When the user clicks the button, we need to set the opposite state of the current
+            if (isSelected) {
+                gameButton.classList.remove("selected");
+                memory[index]["completed"] = false;
+            } else {
+                gameButton.classList.add("selected");
+                memory[index]["completed"] = true;
+            }
+        
+            saveToStorage(memory, key)
+        });
+        
+        gameCell.appendChild(gameButton)
+        row.appendChild(gameCell);
+
+        // MATCH CELL (includes two buttons)
+        const winnerCell = document.createElement("td");
+        const player1Button = document.createElement("button");
+        player1Button.classList.add("winner-button"); // Needed CSS styling
+        player1Button.textContent = player1;
+
+        const player2Button = document.createElement("button");
+        player2Button.classList.add("winner-button"); // Needed CSS styling
+        player2Button.textContent = player2;
+
+        // Decide its selected state based on memory
+        if (winner === player1) {
+            player1Button.classList.add("selected");
+            player2Button.classList.remove("selected");
+        } else if (winner === player2) {
+            player2Button.classList.add("selected");
+            player1Button.classList.remove("selected");
+        }
+
+
+        // Add both buttons to the match cell and add to row
+        winnerCell.appendChild(player1Button);
+        winnerCell.appendChild(player2Button);
+        row.appendChild(winnerCell);
+
+        // EVENTS: Add click events to toggle winner selection
+        player1Button.addEventListener("click", () => {
+            const isSelected = player1Button.classList.contains("selected"); // Get current state of button
+            
+            // When the user clicks the button, we need to set the opposite state of the current
+            if (isSelected) {
+                player1Button.classList.remove("selected");
+                memory[index][winner] = player2;
+            } else {
+                player1Button.classList.add("selected");
+                player2Button.classList.remove("selected");
+                memory[index][winner] = player1;
+            }
+        
+            saveToStorage(memory, key)
+        });
+
+        player2Button.addEventListener("click", () => {
+            const isSelected = player2Button.classList.contains("selected"); // Get current state of button
+            
+            // When the user clicks the button, we need to set the opposite state of the current
+            if (isSelected) {
+                player2Button.classList.remove("selected");
+                memory[index][winner] = player1;
+            } else {
+                player2Button.classList.add("selected");
+                player1Button.classList.remove("selected");
+                memory[index][winner] = player2;
+            }
+        
+            saveToStorage(memory, key)
+        });
+        
+        // ADD ROW TO TABLE
+        tableBody.appendChild(row);
+    });
+    
+    
 }
 
 
@@ -926,7 +1035,7 @@ testButton.addEventListener("click", () => {
     }
 
     // Disable the button to prevent multiple clicks
-    boysDrawButton.disabled = true;
+    //boysDrawButton.disabled = true;
 
     // Clear the previous list of players
     boyPlayers = []; // Clear the array to avoid duplicates
@@ -940,7 +1049,7 @@ testButton.addEventListener("click", () => {
         
     });
 
-    generateDraw(boyPlayers, testMemory, "boysMemory");
+    generateDraw(boyPlayers, testMemory, "boysMemory", "boysdraw");
 })
 
 // Make Boys Draw button
