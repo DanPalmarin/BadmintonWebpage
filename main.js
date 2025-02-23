@@ -1,43 +1,34 @@
 import { makeDraw } from './masterDraws.js';
 
-function startDraw(players, memory) {
+function generateDraw(players, memory) {
     const games = makeDraw(players);
-    //const tableBody = document.getElementById(tableBodyId);
 
+    // MEMORY MANAGEMENT -----------------------------------------------------------
     // Iterate through games and modify memory in place
     games.forEach((pair, index) => {
         const [player1, player2] = pair;
+        const gameKey = `${player1}-${player2}`; // Unique key for each game
 
-        // Find an existing game with these players
-        let existingGame = memory.find(game =>
-            game.players.includes(player1) && game.players.includes(player2)
-        );
-
-        if (!existingGame) {
-            // Insert new game at the correct index
-            memory.splice(index, 0, {
+        if (!memory[index]) {
+            // If the memory doesn't have a game at this index, insert a new one
+            memory[index] = {
                 players: [player1, player2],
                 Game1: [null, null],
                 Completed: false
-            });
+            };
+        } else {
+            // If the game exists, update the players (to match new draw order)
+            memory[index].players = [player1, player2];
         }
     });
 
-    // Remove any games from memory that are no longer in games
-    for (let i = memory.length - 1; i >= 0; i--) {
-        const game = memory[i];
-        const isStillValid = games.some(pair =>
-            game.players.includes(pair[0]) && game.players.includes(pair[1])
-        );
+    // Remove any extra games from memory if the new draw is shorter
+    memory.length = games.length;
 
-        if (!isStillValid) {
-            memory.splice(i, 1); // Remove the outdated game
-        }
-    }
+    //------------------------------------------------------------------------------
 
-    console.log(games);
-    console.log(memory);
 }
+
 
 
 // Make boys draw
@@ -141,7 +132,7 @@ function generateBoysDraw(players, tableBodyId, isRestore = false) {
         }
 
         //boysMemory = {};
-        console.log(existingData);
+        // console.log(existingData);
     }
 
     // Clear the table
@@ -938,7 +929,7 @@ testButton.addEventListener("click", () => {
         
     });
 
-    startDraw(boyPlayers, testMemory);
+    generateDraw(boyPlayers, testMemory);
 })
 
 // Make Boys Draw button
