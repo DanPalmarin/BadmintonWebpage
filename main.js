@@ -3,6 +3,8 @@ import { makeDraw } from './masterDraws.js';
 function generateDraw(players, memory, key, tableBodyId) {
     const games = makeDraw(players);
 
+    console.log(games);
+    
     // MEMORY MANAGEMENT -----------------------------------------------------------
     // Iterate through games and modify memory in place
     games.forEach((pair, index) => {
@@ -11,24 +13,22 @@ function generateDraw(players, memory, key, tableBodyId) {
         if (!memory[index]) {
             // If the memory doesn't have a game at this index, insert a new one
             memory[index] = {
-                players: [player1, player2],
-                winner: null,
-                score: [null, null],
-                completed: false
+                "players": [player1, player2],
+                "winner": null,
+                "score": [null, null],
+                "completed": false
             };
         } else {
             // Preserve existing game state while updating players
             memory[index] = {
                 ...memory[index],
-                players: [player1, player2]
+                "players": [player1, player2]
             };
     }
     });
 
     // Remove any extra games from memory if the new draw is shorter
     memory.length = games.length;
-
-    //console.log(memory);
 
     saveToStorage(memory, key)
     //------------------------------------------------------------------------------
@@ -40,13 +40,11 @@ function generateDraw(players, memory, key, tableBodyId) {
     // Extract all data from memory
     memory.forEach((game, index) => {
         const row = document.createElement("tr"); // Make table row
-        const { players, winner, score, completed } = game; // players = ['player1', 'player2'], winner = null, game = [null,null], completed = true/false
+        const { players, winner, score, completed } = game; // players = ['player1', 'player2'], winner = null, score = [null,null], completed = true/false
         const [player1, player2] = players; // player1 = 'player1, player2 = 'player2'
         const gameNum = index + 1; // We start counting games at 1
         
-        //console.log(gameNum, player1, player2, Game, Completed);
-    
-        // GAME BUTTON
+        // GAME CELL (includes 1 button)
         const gameCell = document.createElement("td");
         gameCell.classList.add("game-cell"); // Needed CSS styling
         const gameButton = document.createElement("button");
@@ -73,7 +71,7 @@ function generateDraw(players, memory, key, tableBodyId) {
                 memory[index]["completed"] = true;
             }
         
-            saveToStorage(memory, key)
+            saveToStorage(memory, key);
         });
         
         gameCell.appendChild(gameButton)
@@ -111,14 +109,14 @@ function generateDraw(players, memory, key, tableBodyId) {
             // When the user clicks the button, we need to set the opposite state of the current
             if (isSelected) {
                 player1Button.classList.remove("selected");
-                memory[index][winner] = player2;
+                memory[index]["winner"] = player2;
             } else {
                 player1Button.classList.add("selected");
                 player2Button.classList.remove("selected");
-                memory[index][winner] = player1;
+                memory[index]["winner"] = player1;
             }
         
-            saveToStorage(memory, key)
+            saveToStorage(memory, key);
         });
 
         player2Button.addEventListener("click", () => {
@@ -127,20 +125,73 @@ function generateDraw(players, memory, key, tableBodyId) {
             // When the user clicks the button, we need to set the opposite state of the current
             if (isSelected) {
                 player2Button.classList.remove("selected");
-                memory[index][winner] = player1;
+                memory[index]["winner"] = player1;
             } else {
                 player2Button.classList.add("selected");
                 player1Button.classList.remove("selected");
-                memory[index][winner] = player2;
+                memory[index]["winner"] = player2;
             }
         
-            saveToStorage(memory, key)
+            saveToStorage(memory, key);
         });
         
+        // SCORES CELL (2 entry boxes)
+        // Make two entry boxes separated by a dash
+        const scoresCell = document.createElement("td");
+        scoresCell.className = 'scoresCell'
+        const scoresContainer = document.createElement("div");
+        scoresContainer.className = 'scores-container';
+
+        const scoreInput1 = document.createElement('input');
+        scoreInput1.inputMode = 'numeric';
+        scoreInput1.className = 'score-input';
+        scoreInput1.maxLength = 2;
+
+        const dash = document.createElement('span');
+        dash.className = 'dash';
+        dash.textContent = '-';
+
+        const scoreInput2 = document.createElement('input');
+        scoreInput2.inputMode = 'numeric';
+        scoreInput2.className = 'score-input';
+        scoreInput2.maxLength = 2;
+
+        // Decide the scores (values of each entry box) based on memory
+        if (score[0] !== null) {
+            scoreInput1.value = score[0];
+        }
+        
+        if (score[1] !== null) {
+            scoreInput2.value = score[1];
+        }
+        
+
+        // EVENTS: Add event listeners on the inputs to update memory
+        scoreInput1.addEventListener('input', () => {
+            memory[index]["score"][0] = scoreInput1.value;
+            saveToStorage(memory, key);
+
+            // Shift focus from input 1 to 2 if the user hits the 2 digit limit on input 1
+            if (scoreInput1.value.length >= 2) {
+                scoreInput2.focus();
+            }
+        });
+
+        scoreInput2.addEventListener('input', () => {
+            memory[index]["score"][1] = scoreInput2.value;
+            saveToStorage(memory, key);
+        });
+
+        scoresContainer.appendChild(scoreInput1);
+        scoresContainer.appendChild(dash);
+        scoresContainer.appendChild(scoreInput2);
+        scoresCell.appendChild(scoresContainer);
+        row.appendChild(scoresCell);
+
         // ADD ROW TO TABLE
         tableBody.appendChild(row);
     });
-    
+    //------------------------------------------------------------------------------
     
 }
 
