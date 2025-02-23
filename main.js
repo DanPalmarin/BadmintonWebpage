@@ -1,6 +1,6 @@
 import { makeDraw } from './masterDraws.js';
 
-function generateDraw(players, memory) {
+function generateDraw(players, memory, key) {
     const games = makeDraw(players);
 
     // MEMORY MANAGEMENT -----------------------------------------------------------
@@ -13,7 +13,7 @@ function generateDraw(players, memory) {
             // If the memory doesn't have a game at this index, insert a new one
             memory[index] = {
                 players: [player1, player2],
-                Game1: [null, null],
+                Game: [null, null],
                 Completed: false
             };
         } else {
@@ -25,6 +25,7 @@ function generateDraw(players, memory) {
     // Remove any extra games from memory if the new draw is shorter
     memory.length = games.length;
 
+    saveToStorage(memory, key)
     //------------------------------------------------------------------------------
 
 }
@@ -850,6 +851,11 @@ function downloadCSV(memory, TableId) {
     URL.revokeObjectURL(url);
 }
 
+// Save to LocalStorage
+function saveToStorage(memory, key) {
+    localStorage.setItem(key, JSON.stringify(memory));
+}
+
 // Save memory to LocalStorage
 function saveMemory() {
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
@@ -929,7 +935,7 @@ testButton.addEventListener("click", () => {
         
     });
 
-    generateDraw(boyPlayers, testMemory);
+    generateDraw(boyPlayers, testMemory, "boysMemory");
 })
 
 // Make Boys Draw button
