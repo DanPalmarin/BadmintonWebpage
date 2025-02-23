@@ -7,6 +7,7 @@ function generateDraw(players, memory, key, tableBodyId) {
 
     // MEMORY MANAGEMENT -----------------------------------------------------------
     // Create a mapping of existing games by player pair for quick lookup
+    console.log(memory);
     const gameMap = new Map(memory.map(game => [game.players.join('-'), game]));
 
     games.forEach((pair, index) => {
@@ -1025,7 +1026,7 @@ function saveToStorage(memory, key) {
 function saveMemory() {
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
     localStorage.setItem("girlAttendance", JSON.stringify(girlAttendance));
-    localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
+    //localStorage.setItem("boysMemory", JSON.stringify(boysMemory));
     localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers));
@@ -1068,7 +1069,7 @@ function remakeRoster() {
 // --- Global variables ---
 let boyAttendance = [];
 let girlAttendance = [];
-let boysMemory = {};
+let boysMemory = [];
 let girlsMemory = {};
 let boyPlayers = [];
 let girlPlayers = [];
@@ -1100,7 +1101,7 @@ testButton.addEventListener("click", () => {
         
     });
 
-    generateDraw(boyPlayers, testMemory, "boysMemory", "boysdraw");
+    generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
 })
 
 // Make Boys Draw button
@@ -1316,7 +1317,7 @@ resetButton.addEventListener("click", () => {
 
     if (!confirmation) return;
 
-    boysMemory = {};
+    boysMemory = [];
     girlsMemory = {};
     boyPlayers = [];
     girlPlayers = [];
@@ -1354,14 +1355,15 @@ document.addEventListener("DOMContentLoaded", () => {
     remakeRoster();
 
     // --- BOYS DRAW ---
-    const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "{}");
+    const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
     const savedBoys = JSON.parse(localStorage.getItem("boyPlayers") || "[]");
-    if (savedBoysMemory !== "{}") {
+    if (savedBoysMemory !== "[]") {
         boysMemory = savedBoysMemory;
         boyPlayers = savedBoys;
 
         // Generate the boys draw
-        generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
+        //generateBoysDraw(boyPlayers, "boysdraw", Boolean(savedBoysMemory));
+        generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
     }
 
     // --- GIRLS DRAW ---
