@@ -4,27 +4,27 @@ function generateDraw(players, memory, key, tableBodyId) {
     const games = makeDraw(players);
 
     console.log(games);
-    
+
     // MEMORY MANAGEMENT -----------------------------------------------------------
-    // Iterate through games and modify memory in place
+    // Create a mapping of existing games by player pair for quick lookup
+    const gameMap = new Map(memory.map(game => [game.players.join('-'), game]));
+
     games.forEach((pair, index) => {
         const [player1, player2] = pair;
+        const gameKey = `${player1}-${player2}`;
 
-        if (!memory[index]) {
-            // If the memory doesn't have a game at this index, insert a new one
+        if (gameMap.has(gameKey)) {
+            // If the game exists, preserve its data but update its index
+            memory[index] = gameMap.get(gameKey);
+        } else {
+            // Otherwise, create a fresh game entry
             memory[index] = {
                 "players": [player1, player2],
                 "winner": null,
                 "score": [null, null],
                 "completed": false
             };
-        } else {
-            // Preserve existing game state while updating players
-            memory[index] = {
-                ...memory[index],
-                "players": [player1, player2]
-            };
-    }
+        }
     });
 
     // Remove any extra games from memory if the new draw is shorter
