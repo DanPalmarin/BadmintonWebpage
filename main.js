@@ -603,34 +603,33 @@ function createDeleteIcon(cell) {
 
     deleteIcon.addEventListener("click", () => {
         if (confirm(`Remove ${nameOnly}?`)) {
-            // Update memory first
-            if (cell.parentElement.children[1].textContent.replace("🗑️", "").trim() === nameOnly) {
-                boyAttendance = boyAttendance.filter(name => name !== nameOnly);
-            } else if (cell.parentElement.children[2].textContent.replace("🗑️", "").trim() === nameOnly) {
-                girlAttendance = girlAttendance.filter(name => name !== nameOnly);
-            }
-
-            // Clear the cell and check if the row needs to be deleted
-            cell.textContent = "";
-
-            // Check if both Boy and Girl cells in the same row are empty
+            // Identify the clicked column
             const row = cell.parentElement;
-            const boyCell = row.children[1];  // Column 1 (Boys)
-            const girlCell = row.children[2]; // Column 2 (Girls)
-
-            // If both cells are empty, remove the row
+            const boyCell = row.children[1];  // Column 2 (Boys)
+            const girlCell = row.children[2]; // Column 3 (Girls)
+    
+            // Update memory first
+            if (boyCell.textContent.replace("🗑️", "").trim() === nameOnly) {
+                boyAttendance = boyAttendance.filter(name => name !== nameOnly);
+                boyplayerRemoved = true;
+            } else if (girlCell.textContent.replace("🗑️", "").trim() === nameOnly) {
+                girlAttendance = girlAttendance.filter(name => name !== nameOnly);
+                girlplayerRemoved = true;
+            }
+    
+            // Clear the cell
+            cell.textContent = "";
+    
+            // Remove the row if both columns are empty
             if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
                 row.remove();
             }
-
-            // If something was removed, enable and update the button
-            // boysDrawButton.textContent = "Update Boys Draw";
-            playerRemoved = true;
-
+    
             // Log attendance memory after update
             saveMemory();
         }
     });
+    
 
     return deleteIcon;
 }
@@ -711,7 +710,6 @@ function saveMemory() {
     
     localStorage.setItem("boysDrawActivated", JSON.stringify(boysDrawActivated));
 
-    localStorage.setItem("girlsMemory", JSON.stringify(girlsMemory));
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers)); 
 }
@@ -754,12 +752,14 @@ function remakeRoster() {
 let boyAttendance = [];
 let girlAttendance = [];
 let boysMemory = [];
-let girlsMemory = {};
+let girlsMemory = [];
 let boyPlayers = [];
 let girlPlayers = [];
 let removeMode = false; // Track mode state
-let playerRemoved = false; // Track if a player was removed
+let boyplayerRemoved = false; // Track if a boy player was removed
+let girlplayerRemoved = false; // Track if a boy player was removed
 let boysDrawActivated = false; // Track if boys draw button has been clicked
+let girlsDrawActivated = false; // Track if girls draw button has been clicked
 
 // --- EVENT LISTENERS ---
 
@@ -794,6 +794,15 @@ boysDrawButton.addEventListener("click", () => {
 
 // Make Girls Draw button
 girlsDrawButton.addEventListener("click", () => {
+    if (!girlsDrawActivated) {
+        girlsDrawActivated = true;
+    }
+
+    saveMemory(); // Save girlsDrawActivated state to localStorage
+
+    // Disable the button to prevent multiple clicks
+    girlsDrawButton.disabled = true;
+
     // Clear the previous list of players
     girlPlayers = []; // Clear the array to avoid duplicates
 
@@ -804,9 +813,8 @@ girlsDrawButton.addEventListener("click", () => {
         }
         
     });
-    //console.log(girlPlayers);
-    generateGirlsDraw(girlPlayers, "girlsdraw");
-    saveMemory(); // Save to localStorage
+
+    generateDraw(girlPlayers, girlsMemory, "girlsMemory", "girlsdraw");
 });
 
 // Add event listener for adding a new player
@@ -912,7 +920,8 @@ addButton.addEventListener("click", () => {
 removeButton.addEventListener("click", () => {
     removeMode = !removeMode; // Toggle mode
     if (removeMode) {
-        playerRemoved = false; // Reset flag when entering remove mode
+        boyplayerRemoved = false; // Reset flag when entering remove mode
+        girlplayerRemoved = false; // Reset flag when entering remove mode
     }
 
     document.querySelectorAll(".delete-icon").forEach(icon => {
@@ -934,11 +943,16 @@ removeButton.addEventListener("click", () => {
     // This is done outside of remove mode
     // Always remake the entire table to remove any blank cells trapped
     if (!removeMode) {
-        boysDrawButton.disabled = !playerRemoved;
-        if (playerRemoved) {
+        if (boyplayerRemoved || girlplayerRemoved) {
             remakeRoster()
             if (boysDrawActivated) {
                 boysDrawButton.textContent = "Update Boys Draw";
+                boysDrawButton.disabled = !boyplayerRemoved;
+            }
+
+            if (girlsDrawActivated) {
+                girlsDrawButton.textContent = "Update Girls Draw";
+                girlsDrawButton.disabled = !girlplayerRemoved;
             }
         }
     }
@@ -972,9 +986,10 @@ resetButton.addEventListener("click", () => {
     if (!confirmation) return;
 
     boysMemory = [];
-    girlsMemory = {};
+    girlsMemory = [];
     boyPlayers = [];
     girlPlayers = [];
+
     const boysTable = document.getElementById("boysdraw");
     boysTable.innerHTML='';
     const girlsTable = document.getElementById("girlsdraw");
@@ -983,6 +998,10 @@ resetButton.addEventListener("click", () => {
     boysDrawButton.textContent = "Make Boys Draw";
     boysDrawButton.disabled = false;
     boysDrawActivated = false;
+
+    girlsDrawButton.textContent = "Make Girls Draw";
+    girlsDrawButton.disabled = false;
+    girlsDrawActivated = false;
 
     localStorage.clear();
 });
@@ -1016,15 +1035,11 @@ document.addEventListener("DOMContentLoaded", () => {
     generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
 
     // --- GIRLS DRAW ---
-    const savedGirlsMemory = JSON.parse(localStorage.getItem("girlsMemory") || "{}");
+    const savedGirlsMemory = JSON.parse(localStorage.getItem("girlsMemory") || "[]");
     const savedGirls = JSON.parse(localStorage.getItem("girlPlayers") || "[]");
-    if (savedGirlsMemory !== "{}") {
-        girlsMemory = savedGirlsMemory;
-        girlPlayers = savedGirls;
-
-        // Generate the girls draw
-        generateGirlsDraw(girlPlayers, "girlsdraw", Boolean(savedGirlsMemory));
-    }
+    girlsMemory = savedGirlsMemory;
+    girlPlayers = savedGirls;
+    generateDraw(girlPlayers, girlsMemory, "girlsMemory", "girlsdraw");
 });
 
 // --- Tab Buttons ---
