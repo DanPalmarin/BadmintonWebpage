@@ -17,14 +17,19 @@ function generateDraw(players, memory, key) {
                 Completed: false
             };
         } else {
-            // If the game exists, update the players (to match new draw order)
-            memory[index].players = [player1, player2];
-        }
+            // Preserve existing game state while updating players
+            memory[index] = {
+                ...memory[index],
+                players: [player1, player2]
+            };
+    }
     });
 
     // Remove any extra games from memory if the new draw is shorter
     memory.length = games.length;
 
+    console.log(memory);
+    
     saveToStorage(memory, key)
     //------------------------------------------------------------------------------
 
