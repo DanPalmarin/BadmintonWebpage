@@ -918,6 +918,12 @@ addButton.addEventListener("click", () => {
 
 // Remove Player(s) button
 removeButton.addEventListener("click", () => {
+    // Get current state of draw buttons
+    let boysButtonState = boysDrawButton.disabled; // true means disabled (grayed out)
+    let girlsButtonState = girlsDrawButton.disabled; // true means disabled (grayed out)
+
+    console.log(boysButtonState, girlsButtonState);
+
     removeMode = !removeMode; // Toggle mode
     if (removeMode) {
         boyplayerRemoved = false; // Reset flag when entering remove mode
@@ -939,23 +945,39 @@ removeButton.addEventListener("click", () => {
         }
     });
 
+    // Switch boys and girls draw buttons back to their state (before the previous code enabled everything)
+    boysDrawButton.disabled = boysButtonState;
+    girlsDrawButton.disabled = girlsButtonState;
+
+
     // Only decide whether to re-enable if a player was actually removed
     // This is done outside of remove mode
     // Always remake the entire table to remove any blank cells trapped
-    if (!removeMode) {
-        if (boyplayerRemoved || girlplayerRemoved) {
-            remakeRoster()
-            if (boysDrawActivated) {
-                boysDrawButton.textContent = "Update Boys Draw";
-                boysDrawButton.disabled = !boyplayerRemoved;
-            }
+    // if (!removeMode) {
+    //     if (boyplayerRemoved) {
+    //         remakeRoster();
+    //         boysDrawButton.disabled = !boyplayerRemoved;
+    //         if (boysDrawActivated) {
+    //             boysDrawButton.textContent = "Update Boys Draw";
+    //         }
+    //     } else {
+    //         if (boysDrawActivated) {
+    //             boysDrawButton.disabled = !boyplayerRemoved;
+    //         }
+    //     }
 
-            if (girlsDrawActivated) {
-                girlsDrawButton.textContent = "Update Girls Draw";
-                girlsDrawButton.disabled = !girlplayerRemoved;
-            }
-        }
-    }
+    //     if (girlplayerRemoved) {
+    //         remakeRoster();
+    //         girlsDrawButton.disabled = !girlplayerRemoved;
+    //         if (girlsDrawActivated) {
+    //             girlsDrawButton.textContent = "Update Girls Draw";
+    //         }
+    //     } else {
+    //         if (girlsDrawActivated) {
+    //             girlsDrawButton.disabled = !girlplayerRemoved;
+    //         }
+    //     }
+    // }
 
     // Apply gray-out effect to everything  
     document.body.classList.toggle("grayed-out", removeMode); 
