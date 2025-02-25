@@ -707,13 +707,13 @@ document.addEventListener("DOMContentLoaded", () => {
     remakeRoster();
 
     // --- BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT
-    const savedBoysDrawActivated = JSON.parse(localStorage.getItem("boysDrawActivated"));
-    const savedGirlsDrawActivated = JSON.parse(localStorage.getItem("girlsDrawActivated"));
+    const savedBoysDrawActivated = JSON.parse(localStorage.getItem("boysDrawActivated") || false);
+    const savedGirlsDrawActivated = JSON.parse(localStorage.getItem("girlsDrawActivated") || false);
     boysDrawActivated = savedBoysDrawActivated;
     girlsDrawActivated = savedGirlsDrawActivated;
     
-    const savedBoysButtonState = JSON.parse(localStorage.getItem("boysButtonState"));
-    const savedGirlsButtonState = JSON.parse(localStorage.getItem("girlsButtonState"));
+    const savedBoysButtonState = JSON.parse(localStorage.getItem("boysButtonState") || false);
+    const savedGirlsButtonState = JSON.parse(localStorage.getItem("girlsButtonState") || false);
     boysButtonState = savedBoysButtonState;
     girlsButtonState = savedGirlsButtonState;
     boysDrawButton.disabled = boysButtonState;
