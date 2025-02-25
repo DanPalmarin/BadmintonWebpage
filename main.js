@@ -719,8 +719,8 @@ document.addEventListener("DOMContentLoaded", () => {
     boysDrawButton.disabled = boysButtonState;
     girlsDrawButton.disabled = girlsButtonState;
 
-    const savedBoysText = JSON.parse(localStorage.getItem("boysText"));
-    const savedGirlsText = JSON.parse(localStorage.getItem("girlsText"));
+    const savedBoysText = JSON.parse(localStorage.getItem("boysText") || "Make Boys Draw");
+    const savedGirlsText = JSON.parse(localStorage.getItem("girlsText") || "Make Girls Draw");
     boysDrawButton.innerText = savedBoysText;
     girlsDrawButton.innerText = savedGirlsText;
 
