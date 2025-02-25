@@ -374,11 +374,23 @@ function saveToStorage(memory, key) {
 
 // Save memory to LocalStorage
 function saveMemory() {
+    // Save the boys and girls draw button states and text
+    boysButtonState = boysDrawButton.disabled;
+    girlsButtonState = girlsDrawButton.disabled;
+    let boysText = boysDrawButton.innerText;
+    let girlsText = girlsDrawButton.innerText;
+
+    localStorage.setItem("boysButtonState", JSON.stringify(boysButtonState));
+    localStorage.setItem("girlsButtonState", JSON.stringify(girlsButtonState));
+
+    localStorage.setItem("boysText", JSON.stringify(boysText));
+    localStorage.setItem("girlsText", JSON.stringify(girlsText));
+
     localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
     localStorage.setItem("girlAttendance", JSON.stringify(girlAttendance));
     
     localStorage.setItem("boysDrawActivated", JSON.stringify(boysDrawActivated));
-    localStorage.setItem("girlsDrawActivated", JSON.stringify(boysDrawActivated));
+    localStorage.setItem("girlsDrawActivated", JSON.stringify(girlsDrawActivated));
 
     localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
     localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers)); 
@@ -427,7 +439,7 @@ let boyPlayers = [];
 let girlPlayers = [];
 let removeMode = false; // Track mode state
 let boyplayerRemoved = false; // Track if a boy player was removed
-let girlplayerRemoved = false; // Track if a boy player was removed
+let girlplayerRemoved = false; // Track if a girl player was removed
 let boysDrawActivated = false; // Track if boys draw button has been clicked
 let girlsDrawActivated = false; // Track if girls draw button has been clicked
 let boysButtonState = false; // true means disabled (grayed out)
@@ -569,23 +581,29 @@ addButton.addEventListener("click", () => {
     }
 
     // Update memory
+    // Always enable the boys and girls draw buttons when adding a name
     if (columnIndex === 1) {
         boyAttendance.push(enteredText);
+        //boysDrawButton.disabled = false;
     } else if (columnIndex === 2) {
         girlAttendance.push(enteredText);
+        //girlsDrawButton.disabled = false;
     }
 
     // Clear entry box
     entryBox.value = "";
-
-    // Log attendance memory
-    saveMemory();
-
-    // If NOT in remove mode and 'Make Boys Draw' was previously pressed, update the button
+    
+    // If NOT in remove mode and a button was previously pressed, update the button
     if (!removeMode && boysDrawButton.disabled) {
         boysDrawButton.textContent = "Update Boys Draw";
         boysDrawButton.disabled = false;
+    } else if (!removeMode && girlsDrawButton.disabled) {
+        girlsDrawButton.textContent = "Update Girls Draw";
+        girlsDrawButton.disabled = false;
     }
+
+    // Log attendance memory
+    saveMemory();
 });
 
 // Remove Player(s) button
@@ -595,7 +613,7 @@ removeButton.addEventListener("click", () => {
         // Save previous button states when entering remove mode
         boysButtonState = boysDrawButton.disabled; // true means disabled (grayed out)
         girlsButtonState = girlsDrawButton.disabled; // true means disabled (grayed out)
-        
+        saveMemory()
     }
 
     // Decides to display trash can whether in remove mode or not
@@ -623,15 +641,21 @@ removeButton.addEventListener("click", () => {
         // Restore button states if no deletions
         if (!boyplayerRemoved) boysDrawButton.disabled = boysButtonState;
         if (!girlplayerRemoved) girlsDrawButton.disabled = girlsButtonState;
+        
+        saveMemory()
 
         // If deletions occurred, update buttons accordingly
         if (boyplayerRemoved && boysDrawActivated) {
             boysDrawButton.textContent = "Update Boys Draw";
             boysDrawButton.disabled = false;
+            saveMemory()
+            remakeRoster(); // Remake roster to delete trapped blank cells
         }
         if (girlplayerRemoved && girlsDrawActivated) {
             girlsDrawButton.textContent = "Update Girls Draw";
             girlsDrawButton.disabled = false;
+            saveMemory()
+            remakeRoster(); // Remake roster to delete trapped blank cells
         }
         
         // Reset deletion flags
@@ -703,6 +727,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Remake the table roster
     remakeRoster();
+
+    // --- BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT
+    const savedBoysDrawActivated = JSON.parse(localStorage.getItem("boysDrawActivated"));
+    const savedGirlsDrawActivated = JSON.parse(localStorage.getItem("girlsDrawActivated"));
+    boysDrawActivated = savedBoysDrawActivated;
+    girlsDrawActivated = savedGirlsDrawActivated;
+    
+    const savedBoysButtonState = JSON.parse(localStorage.getItem("boysButtonState"));
+    const savedGirlsButtonState = JSON.parse(localStorage.getItem("girlsButtonState"));
+    boysButtonState = savedBoysButtonState;
+    girlsButtonState = savedGirlsButtonState;
+    boysDrawButton.disabled = boysButtonState;
+    girlsDrawButton.disabled = girlsButtonState;
+
+
+    const savedBoysText = JSON.parse(localStorage.getItem("boysText"));
+    const savedGirlsText = JSON.parse(localStorage.getItem("girlsText"));
+    boysDrawButton.innerText = savedBoysText;
+    girlsDrawButton.innerText = savedGirlsText;
 
     // --- BOYS DRAW ---
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
