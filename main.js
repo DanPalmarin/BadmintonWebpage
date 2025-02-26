@@ -721,8 +721,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const savedBoysText = JSON.parse(localStorage.getItem("boysText") || "Make Boys Draw");
     const savedGirlsText = JSON.parse(localStorage.getItem("girlsText") || "Make Girls Draw");
-    boysDrawButton.innerText = savedBoysText;
-    girlsDrawButton.innerText = savedGirlsText;
+    boysDrawButton.textContent = savedBoysText;
+    girlsDrawButton.textContent = savedGirlsText;
 
     // --- BOYS DRAW ---
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
