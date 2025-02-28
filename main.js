@@ -309,26 +309,21 @@ function saveToStorage(memory, key) {
 
 // Save memory to LocalStorage
 function saveMemory() {
-    // Save the boys and girls draw button states and text
-    boysButtonState = boysDrawButton.disabled;
-    girlsButtonState = girlsDrawButton.disabled;
-    let boysText = boysDrawButton.innerText;
-    let girlsText = girlsDrawButton.innerText;
-
-    localStorage.setItem("boysButtonState", JSON.stringify(boysButtonState));
-    localStorage.setItem("girlsButtonState", JSON.stringify(girlsButtonState));
-
-    localStorage.setItem("boysText", JSON.stringify(boysText));
-    localStorage.setItem("girlsText", JSON.stringify(girlsText));
-
-    localStorage.setItem("boyAttendance", JSON.stringify(boyAttendance));
-    localStorage.setItem("girlAttendance", JSON.stringify(girlAttendance));
+    const gameState = {
+        boysButtonState: boysDrawButton.disabled,
+        girlsButtonState: girlsDrawButton.disabled,
+        boysText: boysDrawButton.textContent,
+        girlsText: girlsDrawButton.textContent,
+        boyAttendance: boyAttendance,
+        girlAttendance: girlAttendance,
+        boysDrawActivated: boysDrawActivated,
+        girlsDrawActivated: girlsDrawActivated,
+        boyPlayers: boyPlayers,
+        girlPlayers: girlPlayers
+    };
     
-    localStorage.setItem("boysDrawActivated", JSON.stringify(boysDrawActivated));
-    localStorage.setItem("girlsDrawActivated", JSON.stringify(girlsDrawActivated));
 
-    localStorage.setItem("boyPlayers", JSON.stringify(boyPlayers));
-    localStorage.setItem("girlPlayers", JSON.stringify(girlPlayers)); 
+    localStorage.setItem("gameState", JSON.stringify(gameState));
 }
 
 // Function to create a trash icon for removing names
@@ -695,49 +690,40 @@ girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'gi
 
 // Load data from localStorage when the page loads
 document.addEventListener("DOMContentLoaded", () => {
-    // --- ATTENDANCE TABLE ---
-    const savedBoyAttendance = JSON.parse(localStorage.getItem("boyAttendance") || "[]");
-    const savedGirlAttendance = JSON.parse(localStorage.getItem("girlAttendance") || "[]");
-
-    // Initialize the attendance arrays
-    boyAttendance = savedBoyAttendance;
-    girlAttendance = savedGirlAttendance;
-
-    // Remake the table roster
-    remakeRoster();
-
-    // --- BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT
-    const savedBoysDrawActivated = JSON.parse(localStorage.getItem("boysDrawActivated") || false);
-    const savedGirlsDrawActivated = JSON.parse(localStorage.getItem("girlsDrawActivated") || false);
-    boysDrawActivated = savedBoysDrawActivated;
-    girlsDrawActivated = savedGirlsDrawActivated;
-    
-    const savedBoysButtonState = JSON.parse(localStorage.getItem("boysButtonState") || false);
-    const savedGirlsButtonState = JSON.parse(localStorage.getItem("girlsButtonState") || false);
-    boysButtonState = savedBoysButtonState;
-    girlsButtonState = savedGirlsButtonState;
-    boysDrawButton.disabled = boysButtonState;
-    girlsDrawButton.disabled = girlsButtonState;
-
-    const savedBoysText = JSON.parse(localStorage.getItem("boysText") || "Make Boys Draw");
-    const savedGirlsText = JSON.parse(localStorage.getItem("girlsText") || "Make Girls Draw");
-    boysDrawButton.textContent = savedBoysText;
-    girlsDrawButton.textContent = savedGirlsText;
-
-    // --- BOYS DRAW ---
+    const savedState = JSON.parse(localStorage.getItem("gameState"));
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
-    const savedBoys = JSON.parse(localStorage.getItem("boyPlayers") || "[]");
     boysMemory = savedBoysMemory;
-    boyPlayers = savedBoys;
-    generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
-
-    // --- GIRLS DRAW ---
     const savedGirlsMemory = JSON.parse(localStorage.getItem("girlsMemory") || "[]");
-    const savedGirls = JSON.parse(localStorage.getItem("girlPlayers") || "[]");
     girlsMemory = savedGirlsMemory;
-    girlPlayers = savedGirls;
-    generateDraw(girlPlayers, girlsMemory, "girlsMemory", "girlsdraw");
+
+    if (savedState) {
+        // --- ATTENDANCE TABLE ---
+        boyAttendance = savedState.boyAttendance || [];
+        girlAttendance = savedState.girlAttendance || [];
+        remakeRoster();
+
+        // --- BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT ---
+        boysDrawActivated = savedState.boysDrawActivated || false;
+        girlsDrawActivated = savedState.girlsDrawActivated || false;
+
+        boysDrawButton.disabled = savedState.boysButtonState || false;
+        girlsDrawButton.disabled = savedState.girlsButtonState || false;
+
+        boysDrawButton.textContent = savedState.boysText || "Make Boys Draw";
+        girlsDrawButton.textContent = savedState.girlsText || "Make Girls Draw";
+
+        // --- BOYS DRAW ---
+        //boysMemory = savedState.boysMemory || [];
+        boyPlayers = savedState.boyPlayers || [];
+        generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
+
+        // --- GIRLS DRAW ---
+        //girlsMemory = savedState.girlsMemory || [];
+        girlPlayers = savedState.girlPlayers || [];
+        generateDraw(girlPlayers, girlsMemory, "girlsMemory", "girlsdraw");
+    }
 });
+
 
 // --- Tab Buttons ---
 // Return arrays of tabButton objects and their contents
