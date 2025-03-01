@@ -359,6 +359,11 @@ function createDeleteIcon(cell) {
             // Remove the row if both columns are empty
             if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
                 row.remove();
+
+                // Loop through entire table to re-number the rows
+                document.querySelectorAll("#roster tbody tr").forEach((row, index) => {
+                    row.children[0].textContent = index + 1; // Update row number
+                });
             }
     
             // Log attendance memory after update
