@@ -418,9 +418,13 @@ let girlsDrawActivated = false; // Track if girls draw button has been clicked
 let boysButtonState = false; // true means disabled (grayed out)
 let girlsButtonState = false; // true means disabled (grayed out)
 
+// Select your headers and tabs
+const boysHeader = document.querySelector("#roster thead th:nth-child(2)"); // Boys header (2nd column)
+const girlsHeader = document.querySelector("#roster thead th:nth-child(3)"); // Girls header (3rd column)
+const boysTab = document.querySelector('.tab-button[data-tab="boys-draw"]');
+const girlsTab = document.querySelector('.tab-button[data-tab="girls-draw"]');
 
-
-// Load data from localStorage when the page loads
+// After the DOM is loaded, we content all event listeners and pull from LocalStorage
 document.addEventListener("DOMContentLoaded", () => {
     // --- EVENT LISTENERS ---
 
@@ -591,6 +595,21 @@ document.addEventListener("DOMContentLoaded", () => {
             boysButtonState = boysDrawButton.disabled; // true means disabled (grayed out)
             girlsButtonState = girlsDrawButton.disabled; // true means disabled (grayed out)
             saveMemory()
+
+            // Enable editing for headers
+            boysHeader.contentEditable = "true";
+            girlsHeader.contentEditable = "true";
+            boysHeader.classList.add("editable");
+            girlsHeader.classList.add("editable");
+        } else {
+            // Save changes, update tab names, and disable editing
+            boysHeader.contentEditable = "false";
+            girlsHeader.contentEditable = "false";
+            boysHeader.classList.remove("editable");
+            girlsHeader.classList.remove("editable");
+    
+            boysTab.textContent = boysHeader.textContent.trim();
+            girlsTab.textContent = girlsHeader.textContent.trim();
         }
 
         // Decides to display trash can whether in remove mode or not
@@ -599,7 +618,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Change button text and background colour depending on what mode you're in
-        removeButton.textContent = removeMode ? "Done" : "Remove";
+        removeButton.textContent = removeMode ? "Done" : "Edit";
         removeButton.style.backgroundColor = removeMode ? "#FF7043" : "";
 
         // Disable/enable all buttons except the remove button
@@ -757,7 +776,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Save data when the page is unloaded
-// This should be supported cross-browsers
+// This should be supported across desktop and mobile browser
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "hidden") saveMemory();
 });
