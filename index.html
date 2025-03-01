@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basic Webpage</title>
+    <title>Draw Generator</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         .hidden {
@@ -17,7 +17,7 @@
 
 <body>
     <header>
-        <h2>Badminton Tryouts</h2>
+        <h2>Badminton Draws</h2>
     </header>
 
     <main>
@@ -34,12 +34,13 @@
                 <input type="text" id="entryBox" class="entry-box" placeholder="Add a player...">
 
                 <!-- Select gender -->
-                <label>
-                    <input type="radio" name="gender" value="Boys" id="boy"> Boy
+                <label for="boy">
+                    <input type="radio" name="gender" value="Boys" id="boy"> <span id="boyLabel">Boy</span>
                 </label>
-                <label>
-                    <input type="radio" name="gender" value="Girls" id="girl"> Girl
+                <label for="girl">
+                    <input type="radio" name="gender" value="Girls" id="girl"> <span id="girlLabel">Girl</span>
                 </label>
+                
             </div>
 
             <div class = "add-remove-row">
@@ -98,7 +99,7 @@
         </div>
 
         <div id="boys-draw" class="tab-content hidden">
-            <h4> Boys Draw </h4>
+            <!-- <h4> Boys Draw </h4> -->
             <div class="boysdraw-container">
                 <table id="boysdraw-table">
                     <thead>
@@ -117,7 +118,7 @@
         </div>
 
         <div id="girls-draw" class="tab-content hidden">
-            <h4> Girls Draw </h4>
+            <!-- <h4> Girls Draw </h4> -->
     
             <!-- The Draw -->
             <div class="girlsdraw-container">

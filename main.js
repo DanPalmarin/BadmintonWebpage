@@ -312,17 +312,18 @@ function saveMemory() {
     const gameState = {
         boysButtonState: boysDrawButton.disabled,
         girlsButtonState: girlsDrawButton.disabled,
+        boysHeaderText: document.querySelector("#roster thead th:nth-child(2)").textContent.trim(),
+        girlsHeaderText: document.querySelector("#roster thead th:nth-child(3)").textContent.trim(),
         boysText: boysDrawButton.textContent,
         girlsText: girlsDrawButton.textContent,
         boyAttendance: boyAttendance,
         girlAttendance: girlAttendance,
-        boysDrawActivated: boysDrawActivated,
+        boysDrawActivated: boysDrawActivated,  
         girlsDrawActivated: girlsDrawActivated,
         boyPlayers: boyPlayers,
         girlPlayers: girlPlayers
     };
     
-
     localStorage.setItem("gameState", JSON.stringify(gameState));
 }
 
@@ -371,7 +372,11 @@ function createDeleteIcon(cell) {
 
 // Remake the roster table
 function remakeRoster() {
-    // Ensure the table is restored properly
+    // Restore headers
+    document.querySelector("#roster thead th:nth-child(2)").textContent = boysHeaderText;
+    document.querySelector("#roster thead th:nth-child(3)").textContent = girlsHeaderText;
+
+    // Restore names
     const tbody = roster.querySelector('tbody');
     tbody.innerHTML = '';  // Clear existing table rows (only once)
 
@@ -417,12 +422,9 @@ let boysDrawActivated = false; // Track if boys draw button has been clicked
 let girlsDrawActivated = false; // Track if girls draw button has been clicked
 let boysButtonState = false; // true means disabled (grayed out)
 let girlsButtonState = false; // true means disabled (grayed out)
+let boysHeaderText = "Boys";
+let girlsHeaderText = "Girls";
 
-// Select your headers and tabs
-const boysHeader = document.querySelector("#roster thead th:nth-child(2)"); // Boys header (2nd column)
-const girlsHeader = document.querySelector("#roster thead th:nth-child(3)"); // Girls header (3rd column)
-const boysTab = document.querySelector('.tab-button[data-tab="boys-draw"]');
-const girlsTab = document.querySelector('.tab-button[data-tab="girls-draw"]');
 
 // After the DOM is loaded, we content all event listeners and pull from LocalStorage
 document.addEventListener("DOMContentLoaded", () => {
@@ -576,10 +578,10 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // If NOT in remove mode and a button was previously pressed, update the button
         if (!removeMode && boysDrawButton.disabled) {
-            boysDrawButton.textContent = "Update Boys Draw";
+            boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
             boysDrawButton.disabled = false;
         } else if (!removeMode && girlsDrawButton.disabled) {
-            girlsDrawButton.textContent = "Update Girls Draw";
+            girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
             girlsDrawButton.disabled = false;
         }
 
@@ -590,26 +592,41 @@ document.addEventListener("DOMContentLoaded", () => {
     // Remove Player(s) button
     removeButton.addEventListener("click", () => {
         removeMode = !removeMode; // Toggle mode
+
+        // Select your headers and tabs
+        const boysHeader = document.querySelector("#roster thead th:nth-child(2)"); // Boys header (2nd column)
+        const girlsHeader = document.querySelector("#roster thead th:nth-child(3)"); // Girls header (3rd column)
+        const boysTab = document.querySelector('.tab-button[data-tab="boys-draw"]');
+        const girlsTab = document.querySelector('.tab-button[data-tab="girls-draw"]');
+        const boysRadio = document.getElementById("boyLabel");
+        const girlsRadio = document.getElementById("girlLabel");
+
         if (removeMode) {
             // Save previous button states when entering remove mode
             boysButtonState = boysDrawButton.disabled; // true means disabled (grayed out)
             girlsButtonState = girlsDrawButton.disabled; // true means disabled (grayed out)
-            saveMemory()
-
+            
             // Enable editing for headers
             boysHeader.contentEditable = "true";
             girlsHeader.contentEditable = "true";
             boysHeader.classList.add("editable");
             girlsHeader.classList.add("editable");
+            saveMemory()
         } else {
             // Save changes, update tab names, and disable editing
             boysHeader.contentEditable = "false";
             girlsHeader.contentEditable = "false";
             boysHeader.classList.remove("editable");
             girlsHeader.classList.remove("editable");
-    
+            
+            // Update text of radiobuttons, tabs, and draw buttons (which make be overwritten below with 'update')
+            boysRadio.textContent = boysHeader.textContent.trim();
+            girlsRadio.textContent = girlsHeader.textContent.trim();
             boysTab.textContent = boysHeader.textContent.trim();
             girlsTab.textContent = girlsHeader.textContent.trim();
+            boysDrawButton.textContent = `Make ${boysHeader.textContent.trim()} Draw`;
+            girlsDrawButton.textContent = `Make ${girlsHeader.textContent.trim()} Draw`;
+            saveMemory()
         }
 
         // Decides to display trash can whether in remove mode or not
@@ -642,13 +659,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // If deletions occurred, update buttons accordingly
             if (boyplayerRemoved && boysDrawActivated) {
-                boysDrawButton.textContent = "Update Boys Draw";
+                boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
                 boysDrawButton.disabled = false;
                 saveMemory()
                 remakeRoster(); // Remake roster to delete trapped blank cells
             }
             if (girlplayerRemoved && girlsDrawActivated) {
-                girlsDrawButton.textContent = "Update Girls Draw";
+                girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
                 girlsDrawButton.disabled = false;
                 saveMemory()
                 remakeRoster(); // Remake roster to delete trapped blank cells
@@ -666,6 +683,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const confirmation = confirm("This clears all attendance. Are you sure you wish to proceed? ");
 
         if (!confirmation) return;
+
+        // Reset table headers
+        //document.querySelector("#roster thead th:nth-child(2)").textContent = "Boys";
+        //document.querySelector("#roster thead th:nth-child(3)").textContent = "Girls";
 
         boyAttendance = [];
         girlAttendance = [];
@@ -688,19 +709,18 @@ document.addEventListener("DOMContentLoaded", () => {
         girlsMemory = [];
         boyPlayers = [];
         girlPlayers = [];
-
-        const boysTable = document.getElementById("boysdraw");
-        boysTable.innerHTML='';
-        const girlsTable = document.getElementById("girlsdraw");
-        girlsTable.innerHTML='';
+        
+        // Clear draws
+        document.getElementById("boysdraw").innerHTML='';
+        document.getElementById("girlsdraw").innerHTML='';
 
         removeMode = false;
 
-        boysDrawButton.textContent = "Make Boys Draw";
+        boysDrawButton.textContent = `Make ${boysHeaderText} Draw`;
         boysDrawButton.disabled = false;
         boysDrawActivated = false;
 
-        girlsDrawButton.textContent = "Make Girls Draw";
+        girlsDrawButton.textContent = `Make ${girlsHeaderText} Draw`;
         girlsDrawButton.disabled = false;
         girlsDrawActivated = false;
 
@@ -747,27 +767,37 @@ document.addEventListener("DOMContentLoaded", () => {
     girlsMemory = savedGirlsMemory;
 
     if (savedState) {
-        // --- ATTENDANCE TABLE ---
+        // ATTENDANCE TABLE
+        boysHeaderText = savedState.boysHeaderText || "Boys";
+        girlsHeaderText = savedState.girlsHeaderText || "Girls";
         boyAttendance = savedState.boyAttendance || [];
         girlAttendance = savedState.girlAttendance || [];
         remakeRoster();
 
-        // --- BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT ---
+        // RADIO BUTTONS
+        document.getElementById("boyLabel").textContent = boysHeaderText;
+        document.getElementById("girlLabel").textContent = girlsHeaderText;
+
+        // DRAW TAB NAMES
+        document.querySelector('.tab-button[data-tab="boys-draw"]').textContent = boysHeaderText;
+        document.querySelector('.tab-button[data-tab="girls-draw"]').textContent = girlsHeaderText;
+
+        // BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT
         boysDrawActivated = savedState.boysDrawActivated || false;
         girlsDrawActivated = savedState.girlsDrawActivated || false;
 
         boysDrawButton.disabled = savedState.boysButtonState || false;
         girlsDrawButton.disabled = savedState.girlsButtonState || false;
 
-        boysDrawButton.textContent = savedState.boysText || "Make Boys Draw";
-        girlsDrawButton.textContent = savedState.girlsText || "Make Girls Draw";
+        boysDrawButton.textContent = savedState.boysText || `Make ${boysHeaderText} Draw`;
+        girlsDrawButton.textContent = savedState.girlsText || `Make ${girlsHeaderText} Draw`;
 
-        // --- BOYS DRAW ---
+        // BOYS DRAW
         //boysMemory = savedState.boysMemory || [];
         boyPlayers = savedState.boyPlayers || [];
         generateDraw(boyPlayers, boysMemory, "boysMemory", "boysdraw");
 
-        // --- GIRLS DRAW ---
+        // GIRLS DRAW
         //girlsMemory = savedState.girlsMemory || [];
         girlPlayers = savedState.girlPlayers || [];
         generateDraw(girlPlayers, girlsMemory, "girlsMemory", "girlsdraw");
