@@ -329,50 +329,91 @@ function saveMemory() {
 
 // Function to create a trash icon for removing names
 function createDeleteIcon(cell) {
+    const container = document.createElement("span");
+    container.classList.add("icon-container");
+
+    // Edit icon (placed first)
+    const editIcon = document.createElement("span");
+    editIcon.textContent = "✏️";
+    editIcon.classList.add("edit-icon");
+    editIcon.style.display = "none"; // Initially hidden
+
+    // Trash icon for removal
     const deleteIcon = document.createElement("span");
     deleteIcon.textContent = "🗑️";
     deleteIcon.classList.add("delete-icon");
     deleteIcon.style.display = "none"; // Initially hidden
 
-    // Get the name without the trash icon
-    const nameOnly = cell.textContent.replace("🗑️", "").trim();
+    // Append icons in order
+    container.appendChild(editIcon);
+    container.appendChild(deleteIcon);
 
+    // Get the name without icons
+    const getName = () => cell.textContent.replace(/[🗑️✏️]/g, "").trim();
+
+    // Delete functionality
     deleteIcon.addEventListener("click", () => {
+        const nameOnly = getName();
         if (confirm(`Remove ${nameOnly}?`)) {
-            // Identify the clicked column
             const row = cell.parentElement;
-            const boyCell = row.children[1];  // Column 2 (Boys)
-            const girlCell = row.children[2]; // Column 3 (Girls)
-    
-            // Update memory first
-            if (boyCell.textContent.replace("🗑️", "").trim() === nameOnly) {
+            const boyCell = row.children[1];  // Boys column
+            const girlCell = row.children[2]; // Girls column
+
+            if (boyCell.textContent.includes(nameOnly)) {
                 boyAttendance = boyAttendance.filter(name => name !== nameOnly);
                 boyplayerRemoved = true;
-            } else if (girlCell.textContent.replace("🗑️", "").trim() === nameOnly) {
+            } else if (girlCell.textContent.includes(nameOnly)) {
                 girlAttendance = girlAttendance.filter(name => name !== nameOnly);
                 girlplayerRemoved = true;
             }
-    
-            // Clear the cell
-            cell.textContent = "";
-    
-            // Remove the row if both columns are empty
-            if (boyCell.textContent.trim() === '' && girlCell.textContent.trim() === '') {
-                row.remove();
 
-                // Loop through entire table to re-number the rows
-                document.querySelectorAll("#roster tbody tr").forEach((row, index) => {
-                    row.children[0].textContent = index + 1; // Update row number
-                });
+            cell.textContent = ""; // Clear name
+            if (!boyCell.textContent.trim() && !girlCell.textContent.trim()) {
+                row.remove(); // Remove empty row
             }
-    
-            // Log attendance memory after update
+
             saveMemory();
         }
     });
+
+    // Edit functionality
+    editIcon.addEventListener("click", () => {
+        const oldName = getName();
+        const newName = prompt(`Edit name for ${oldName}:`, oldName)?.trim();
+    
+        if (!newName || newName === oldName) return; // Cancel or no change
+    
+        // Determine if editing a boy's or girl's name
+        const isBoy = boyAttendance.includes(oldName);
+        const isGirl = girlAttendance.includes(oldName);
+    
+        // Ensure we only check for duplicates within the same list
+        if (isBoy && boyAttendance.includes(newName)) {
+            alert(`Error: The name "${newName}" is already in the list.`);
+            return;
+        }
+        if (isGirl && girlAttendance.includes(newName)) {
+            alert(`Error: The name "${newName}" is already in the list.`);
+            return;
+        }
+    
+        // Update the name in the table
+        cell.textContent = newName;
+        cell.appendChild(container);
+    
+        // Update attendance list
+        if (isBoy) {
+            boyAttendance[boyAttendance.indexOf(oldName)] = newName;
+        } else if (isGirl) {
+            girlAttendance[girlAttendance.indexOf(oldName)] = newName;
+        }
+    
+        saveMemory();
+    });
+    
     
 
-    return deleteIcon;
+    return container;
 }
 
 // Remake the roster table
@@ -453,7 +494,7 @@ document.addEventListener("DOMContentLoaded", () => {
         boyPlayers = []; // Clear the array to avoid duplicates
 
         document.querySelectorAll('#roster tbody tr').forEach(row => {
-            const boy = row.children[1]?.textContent.replace("🗑️", "").trim();
+            const boy = row.children[1]?.textContent.replace("✏️", "").replace("🗑️", "").trim();
             
             if (boy !== '') {
                 boyPlayers.push(boy);
@@ -479,7 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
         girlPlayers = []; // Clear the array to avoid duplicates
 
         document.querySelectorAll('#roster tbody tr').forEach(row => {
-            const girl = row.children[2]?.textContent.replace("🗑️", "").trim();
+            const girl = row.children[2]?.textContent.replace("✏️", "").replace("🗑️", "").trim();
             if (girl !== '') {
                 girlPlayers.push(girl);
             }
@@ -513,11 +554,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const columnIndex = selectedGender === "Boys" ? 1 : 2;
 
         // The names must be unique to their column
-        if (boyAttendance.includes(enteredText)) {
-            alert("A boy has already been added with that name.");
+        if (columnIndex === 1 && boyAttendance.includes(enteredText)) {
+            alert("That name has already been added to that category.");
             return; // Exit
-        } else if (girlAttendance.includes(enteredText)) {
-            alert("A girl has already been added with that name.");
+        } 
+        if (columnIndex === 2 && girlAttendance.includes(enteredText)) {
+            alert("That name has already been added to that category.");
             return; // Exit
         }
 
@@ -554,12 +596,12 @@ document.addEventListener("DOMContentLoaded", () => {
             newRow.appendChild(numberCell);
             if (selectedGender === "Boys") {
                 boyCell.textContent = enteredText;
-                boyCell.appendChild(createDeleteIcon(boyCell)); // Attach trash icon
+                boyCell.appendChild(createDeleteIcon(boyCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Append to the row
                 newRow.appendChild(girlCell); // Empty girl cell
             } else if (selectedGender === "Girls") {
                 girlCell.textContent = enteredText;
-                girlCell.appendChild(createDeleteIcon(girlCell)); // Attach trash icon
+                girlCell.appendChild(createDeleteIcon(girlCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Empty boy cell
                 newRow.appendChild(girlCell); // Append to the row
             }
@@ -582,10 +624,10 @@ document.addEventListener("DOMContentLoaded", () => {
         entryBox.value = "";
         
         // If NOT in remove mode and a button was previously pressed, update the button
-        if (!removeMode && boysDrawButton.disabled) {
+        if (!removeMode && columnIndex === 1 && boysDrawButton.disabled) {
             boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
             boysDrawButton.disabled = false;
-        } else if (!removeMode && girlsDrawButton.disabled) {
+        } else if (!removeMode && columnIndex === 2 && girlsDrawButton.disabled) {
             girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
             girlsDrawButton.disabled = false;
         }
@@ -635,7 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Decides to display trash can whether in remove mode or not
-        document.querySelectorAll(".delete-icon").forEach(icon => {
+        document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
             icon.style.display = removeMode ? "inline-block" : "none";
         });
 
