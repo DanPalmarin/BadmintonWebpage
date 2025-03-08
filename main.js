@@ -370,8 +370,15 @@ function createDeleteIcon(cell) {
             cell.textContent = ""; // Clear name
             if (!boyCell.textContent.trim() && !girlCell.textContent.trim()) {
                 row.remove(); // Remove empty row
+                
+                
             }
 
+            remakeRoster(); // This fixes the row numbering and trapped blank cells
+            // Display trash can and edit icon
+            document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
+                icon.style.display = removeMode ? "inline-block" : "none";
+            });
             saveMemory();
         }
     });
@@ -647,6 +654,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const girlsTab = document.querySelector('.tab-button[data-tab="girls-draw"]');
         const boysRadio = document.getElementById("boyLabel");
         const girlsRadio = document.getElementById("girlLabel");
+        const boysDownload = document.getElementById("boysDownloadButton");
+        const girlsDownload = document.getElementById("girlsDownloadButton");
+
+        boysHeaderText = boysHeader.textContent.trim();
+        girlsHeaderText = girlsHeader.textContent.trim();
 
         if (removeMode) {
             // Save previous button states when entering remove mode
@@ -671,8 +683,10 @@ document.addEventListener("DOMContentLoaded", () => {
             girlsRadio.textContent = girlsHeader.textContent.trim();
             boysTab.textContent = boysHeader.textContent.trim();
             girlsTab.textContent = girlsHeader.textContent.trim();
-            boysDrawButton.textContent = `Make ${boysHeader.textContent.trim()} Draw`;
-            girlsDrawButton.textContent = `Make ${girlsHeader.textContent.trim()} Draw`;
+            boysDownload.textContent = `Download ${boysHeaderText} Results`;
+            girlsDownload.textContent = `Download ${girlsHeaderText} Results`;
+            boysDrawButton.textContent = `Make ${boysHeaderText} Draw`;
+            girlsDrawButton.textContent = `Make ${girlsHeaderText} Draw`;
             saveMemory()
         }
 
@@ -709,13 +723,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
                 boysDrawButton.disabled = false;
                 saveMemory()
-                remakeRoster(); // Remake roster to delete trapped blank cells
             }
             if (girlplayerRemoved && girlsDrawActivated) {
                 girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
                 girlsDrawButton.disabled = false;
                 saveMemory()
-                remakeRoster(); // Remake roster to delete trapped blank cells
             }
             
             // Reset deletion flags
@@ -804,8 +816,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector('.tab-button[data-tab="attendance"]').click();
 
     // Results download buttons
-    boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results', 'boys'));
-    girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'girls-results', 'girls'));
+    boysDownloadButton.addEventListener("click", () => downloadCSV(boysMemory, 'boys-results', boysHeaderText));
+    girlsDownloadButton.addEventListener("click", () => downloadCSV(girlsMemory, 'girls-results', girlsHeaderText));
 
     const savedState = JSON.parse(localStorage.getItem("gameState"));
     const savedBoysMemory = JSON.parse(localStorage.getItem("boysMemory") || "[]");
@@ -828,6 +840,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // DRAW TAB NAMES
         document.querySelector('.tab-button[data-tab="boys-draw"]').textContent = boysHeaderText;
         document.querySelector('.tab-button[data-tab="girls-draw"]').textContent = girlsHeaderText;
+
+        // DOWNLOAD BUTTON NAMES
+        document.getElementById("boysDownloadButton").textContent = `Download ${boysHeaderText} Results`;
+        document.getElementById("girlsDownloadButton").textContent = `Download ${girlsHeaderText} Results`;
 
         // BOYS AND GIRLS BUTTON ACTIVATION, STATE, AND TEXT
         boysDrawActivated = savedState.boysDrawActivated || false;
