@@ -690,14 +690,29 @@ document.addEventListener("DOMContentLoaded", () => {
             saveMemory()
         }
 
-        // Decides to display trash can whether in remove mode or not (the edit icon is hidden if either draw button has already been pressed)
+        // Decides to display trash can whether in remove mode or not
+        // The edit icon is hidden if either draw button has already been pressed (i.e. boys edits are hidden if boy draw is pressed)
         document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
-            if (icon.classList.contains("edit-icon") && (boysDrawActivated || girlsDrawActivated)) {
-                icon.style.display = "none";
-            } else {
-                icon.style.display = removeMode ? "inline-block" : "none";
+            const cell = icon.closest("td"); // Get the parent cell
+            if (!cell) return; // Ensure cell exists
+        
+            const columnIndex = cell.cellIndex; // Get the column index
+            const isBoyColumn = columnIndex === 1;
+            const isGirlColumn = columnIndex === 2;
+        
+            if (icon.classList.contains("edit-icon")) {
+                // Only hide edit icons if boysDrawActivated or girlsDrawActivated
+                if ((isBoyColumn && boysDrawActivated) || (isGirlColumn && girlsDrawActivated)) {
+                    icon.style.display = "none";
+                    return;
+                }
             }
+        
+            // Default behavior for all icons (edit and delete)
+            icon.style.display = removeMode ? "inline-block" : "none";
         });
+        
+        
         
 
         // Change button text and background colour depending on what mode you're in
