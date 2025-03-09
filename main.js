@@ -690,10 +690,15 @@ document.addEventListener("DOMContentLoaded", () => {
             saveMemory()
         }
 
-        // Decides to display trash can whether in remove mode or not
+        // Decides to display trash can whether in remove mode or not (the edit icon is hidden if either draw button has already been pressed)
         document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
-            icon.style.display = removeMode ? "inline-block" : "none";
+            if (icon.classList.contains("edit-icon") && (boysDrawActivated || girlsDrawActivated)) {
+                icon.style.display = "none";
+            } else {
+                icon.style.display = removeMode ? "inline-block" : "none";
+            }
         });
+        
 
         // Change button text and background colour depending on what mode you're in
         removeButton.textContent = removeMode ? "Done" : "Edit";
