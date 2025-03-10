@@ -558,7 +558,8 @@ let boysButtonState = false; // true means disabled (grayed out)
 let girlsButtonState = false; // true means disabled (grayed out)
 let boysHeaderText = "Boys";
 let girlsHeaderText = "Girls";
-
+let boysDrawButtonText = `Make ${boysHeaderText} Draw`;
+let girlsDrawButtonText = `Make ${girlsHeaderText} Draw`;
 
 // After the DOM is loaded, we content all event listeners and pull from LocalStorage
 document.addEventListener("DOMContentLoaded", () => {
@@ -766,8 +767,19 @@ document.addEventListener("DOMContentLoaded", () => {
             girlsTab.textContent = girlsHeader.textContent.trim();
             boysDownload.textContent = `Download ${boysHeaderText} Results`;
             girlsDownload.textContent = `Download ${girlsHeaderText} Results`;
-            boysDrawButton.textContent = `Make ${boysHeaderText} Draw`;
-            girlsDrawButton.textContent = `Make ${girlsHeaderText} Draw`;
+            // Ensure the correct button text stays consistent
+            if (boysDrawActivated) {
+                boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
+            } else {
+                boysDrawButton.textContent = boysDrawButtonText;
+            }
+
+            if (girlsDrawActivated) {
+                girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
+            } else {
+                girlsDrawButton.textContent = girlsDrawButtonText;
+            }
+
             saveMemory()
         }
 
@@ -776,28 +788,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".edit-icon, .delete-icon, .swap-icon").forEach(icon => {
             icon.style.display = removeMode ? "inline-block" : "none";
         });
-        // The edit icon is hidden if either draw button has already been pressed (i.e. boys edits are hidden if boy draw is pressed)
-        // document.querySelectorAll(".edit-icon, .swap-icon, .delete-icon").forEach(icon => {
-        //     const cell = icon.closest("td"); // Get the parent cell
-        //     if (!cell) return; // Ensure cell exists
-        
-        //     const columnIndex = cell.cellIndex; // Get the column index
-        //     const isBoyColumn = columnIndex === 1;
-        //     const isGirlColumn = columnIndex === 2;
-        
-        //     if (icon.classList.contains("edit-icon")) {
-        //         // Only hide edit icons if boysDrawActivated or girlsDrawActivated
-        //         if ((isBoyColumn && boysDrawActivated) || (isGirlColumn && girlsDrawActivated)) {
-        //             icon.style.display = "none";
-        //             return;
-        //         }
-        //     }
-        
-        //     // Default behavior for all icons (edit and delete)
-        //     icon.style.display = removeMode ? "inline-block" : "none";
-        // });
-        
-        
         
 
         // Change button text and background colour depending on what mode you're in
@@ -817,24 +807,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Manually disable and enable the boys and girls draw buttons
         if (!removeMode) {
+            // Track if the button text was "Update" before entering edit mode
+            let wasBoysDrawUpdated = boysDrawButton.textContent === `Update ${boysHeaderText} Draw`;
+            let wasGirlsDrawUpdated = girlsDrawButton.textContent === `Update ${girlsHeaderText} Draw`;
+
             // Restore button states if no deletions
             if (!boyplayerRemoved) boysDrawButton.disabled = boysButtonState;
             if (!girlplayerRemoved) girlsDrawButton.disabled = girlsButtonState;
             
-            saveMemory()
+            saveMemory();
 
             // If deletions occurred, update buttons accordingly
             if (boyplayerRemoved && boysDrawActivated) {
                 boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
                 boysDrawButton.disabled = false;
-                saveMemory()
+                saveMemory();
             }
             if (girlplayerRemoved && girlsDrawActivated) {
                 girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
                 girlsDrawButton.disabled = false;
-                saveMemory()
+                saveMemory();
             }
-            
+
+            // If no deletions and the button was previously "Update", retain "Update" text
+            if (!boyplayerRemoved && !wasBoysDrawUpdated) {
+                boysDrawButton.textContent = `Make ${boysHeaderText} Draw`;
+            }
+            if (!girlplayerRemoved && !wasGirlsDrawUpdated) {
+                girlsDrawButton.textContent = `Make ${girlsHeaderText} Draw`;
+            }
+
             // Reset deletion flags
             boyplayerRemoved = false;
             girlplayerRemoved = false;
