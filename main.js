@@ -394,13 +394,13 @@ function createDeleteIcon(cell) {
     editIcon.addEventListener("click", () => {
         const oldName = getName();
         const newName = prompt(`Edit name for ${oldName}:`, oldName)?.trim();
-    
+        
         if (!newName || newName === oldName) return; // Cancel or no change
-    
+        
         // Determine if editing a boy's or girl's name
         const isBoy = boyAttendance.includes(oldName);
         const isGirl = girlAttendance.includes(oldName);
-    
+
         // Ensure we only check for duplicates within the same list
         if (isBoy && boyAttendance.includes(newName)) {
             alert(`Error: The name "${newName}" is already in the list.`);
@@ -410,20 +410,49 @@ function createDeleteIcon(cell) {
             alert(`Error: The name "${newName}" is already in the list.`);
             return;
         }
-    
+
+        // Check if a draw has been made (by checking the activated state of the draw buttons)
+        if (boysDrawActivated || girlsDrawActivated) {
+            // Update memory only if a draw has been made
+            if (isBoy) {
+                const playerIndex = boyAttendance.indexOf(oldName);
+                boyAttendance[playerIndex] = newName;
+                // Update the corresponding entry in boysMemory
+                boysMemory.forEach(game => {
+                    if (game.players.includes(oldName)) {
+                        game.players[game.players.indexOf(oldName)] = newName;
+                    }
+                    // Swap winner if necessary
+                    if (game.winner === oldName) {
+                        game.winner = newName;
+                    }
+                });
+                boyplayerRemoved = true;
+            } else if (isGirl) {
+                const playerIndex = girlAttendance.indexOf(oldName);
+                girlAttendance[playerIndex] = newName;
+                // Update the corresponding entry in girlsMemory
+                girlsMemory.forEach(game => {
+                    if (game.players.includes(oldName)) {
+                        game.players[game.players.indexOf(oldName)] = newName;
+                    }
+                    // Swap winner if necessary
+                    if (game.winner === oldName) {
+                        game.winner = newName;
+                    }
+                });
+                girlplayerRemoved = true;
+            }
+            
+            // Save memory after modification
+            saveMemory();
+        }
+
         // Update the name in the table
         cell.textContent = newName;
         cell.appendChild(container);
-    
-        // Update attendance list
-        if (isBoy) {
-            boyAttendance[boyAttendance.indexOf(oldName)] = newName;
-        } else if (isGirl) {
-            girlAttendance[girlAttendance.indexOf(oldName)] = newName;
-        }
-    
-        saveMemory();
     });
+
     
     // Swap functionality
     swapIcon.addEventListener("click", () => {
@@ -743,26 +772,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Decides to display trash can whether in remove mode or not
-        // The edit icon is hidden if either draw button has already been pressed (i.e. boys edits are hidden if boy draw is pressed)
-        document.querySelectorAll(".edit-icon, .swap-icon, .delete-icon").forEach(icon => {
-            const cell = icon.closest("td"); // Get the parent cell
-            if (!cell) return; // Ensure cell exists
-        
-            const columnIndex = cell.cellIndex; // Get the column index
-            const isBoyColumn = columnIndex === 1;
-            const isGirlColumn = columnIndex === 2;
-        
-            if (icon.classList.contains("edit-icon")) {
-                // Only hide edit icons if boysDrawActivated or girlsDrawActivated
-                if ((isBoyColumn && boysDrawActivated) || (isGirlColumn && girlsDrawActivated)) {
-                    icon.style.display = "none";
-                    return;
-                }
-            }
-        
-            // Default behavior for all icons (edit and delete)
+        // Display trash can and edit icon and swap icon
+        document.querySelectorAll(".edit-icon, .delete-icon, .swap-icon").forEach(icon => {
             icon.style.display = removeMode ? "inline-block" : "none";
         });
+        // The edit icon is hidden if either draw button has already been pressed (i.e. boys edits are hidden if boy draw is pressed)
+        // document.querySelectorAll(".edit-icon, .swap-icon, .delete-icon").forEach(icon => {
+        //     const cell = icon.closest("td"); // Get the parent cell
+        //     if (!cell) return; // Ensure cell exists
+        
+        //     const columnIndex = cell.cellIndex; // Get the column index
+        //     const isBoyColumn = columnIndex === 1;
+        //     const isGirlColumn = columnIndex === 2;
+        
+        //     if (icon.classList.contains("edit-icon")) {
+        //         // Only hide edit icons if boysDrawActivated or girlsDrawActivated
+        //         if ((isBoyColumn && boysDrawActivated) || (isGirlColumn && girlsDrawActivated)) {
+        //             icon.style.display = "none";
+        //             return;
+        //         }
+        //     }
+        
+        //     // Default behavior for all icons (edit and delete)
+        //     icon.style.display = removeMode ? "inline-block" : "none";
+        // });
         
         
         
