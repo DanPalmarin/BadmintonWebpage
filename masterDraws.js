@@ -21,7 +21,7 @@ export function makeDraw(players) {
             // Skip matches involving "Bye"
             if (player1 !== "Bye" && player2 !== "Bye") {
                 const matchPlayers = [player1, player2];
-                matchPlayers.sort();
+                //matchPlayers.sort();
                 roundMatches.push(matchPlayers);
             }
         }
