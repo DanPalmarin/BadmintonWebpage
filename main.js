@@ -338,6 +338,12 @@ function createDeleteIcon(cell) {
     editIcon.classList.add("edit-icon");
     editIcon.style.display = "none"; // Initially hidden
 
+    // Swap icon for switching sides
+    const swapIcon = document.createElement("span");
+    swapIcon.textContent = "↔️"; // Two-sided arrow
+    swapIcon.classList.add("swap-icon");
+    swapIcon.style.display = "none"; // Initially hidden
+
     // Trash icon for removal
     const deleteIcon = document.createElement("span");
     deleteIcon.textContent = "🗑️";
@@ -346,10 +352,11 @@ function createDeleteIcon(cell) {
 
     // Append icons in order
     container.appendChild(editIcon);
+    container.appendChild(swapIcon);
     container.appendChild(deleteIcon);
 
     // Get the name without icons
-    const getName = () => cell.textContent.replace(/[🗑️✏️]/g, "").trim();
+    const getName = () => cell.textContent.replace(/[🗑️✏️↔️]/g, "").trim();
 
     // Delete functionality
     deleteIcon.addEventListener("click", () => {
@@ -376,7 +383,7 @@ function createDeleteIcon(cell) {
 
             remakeRoster(); // This fixes the row numbering and trapped blank cells
             // Display trash can and edit icon
-            document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
+            document.querySelectorAll(".edit-icon, .delete-icon, .swap-icon").forEach(icon => {
                 icon.style.display = removeMode ? "inline-block" : "none";
             });
             saveMemory();
@@ -418,7 +425,52 @@ function createDeleteIcon(cell) {
         saveMemory();
     });
     
-    
+    // Swap functionality
+    swapIcon.addEventListener("click", () => {
+
+        const nameOnly = getName();
+        const row = cell.parentElement;
+        const boyCell = row.children[1];  // Boys column
+        const girlCell = row.children[2]; // Girls column
+
+        if (boyCell.textContent.includes(nameOnly)) {
+            // Ensure uniqueness before swapping
+            if (girlAttendance.includes(nameOnly)) {
+                alert("That name has already been added to that category.");
+                return;
+            }
+
+            // Add to girls first, then remove from boys
+            girlAttendance.push(nameOnly);
+            girlCell.textContent = nameOnly;
+            boyAttendance = boyAttendance.filter(name => name !== nameOnly);
+            boyCell.textContent = ""; // Clear old cell
+            boyplayerRemoved = true;
+            girlplayerRemoved = true;
+        } else if (girlCell.textContent.includes(nameOnly)) {
+            // Ensure uniqueness before swapping
+            if (boyAttendance.includes(nameOnly)) {
+                alert("That name has already been added to that category.");
+                return;
+            }
+
+            // Add to boys first, then remove from girls
+            boyAttendance.push(nameOnly);
+            boyCell.textContent = nameOnly;
+            girlAttendance = girlAttendance.filter(name => name !== nameOnly);
+            girlCell.textContent = ""; // Clear old cell
+            girlplayerRemoved = true;
+            boyplayerRemoved = true;
+        }
+
+        remakeRoster(); // This fixes the row numbering and trapped blank cells
+        // Display trash can and edit icon and swap icon
+        document.querySelectorAll(".edit-icon, .delete-icon, .swap-icon").forEach(icon => {
+            icon.style.display = removeMode ? "inline-block" : "none";
+        });
+        saveMemory();
+    });
+
 
     return container;
 }
@@ -501,7 +553,7 @@ document.addEventListener("DOMContentLoaded", () => {
         boyPlayers = []; // Clear the array to avoid duplicates
 
         document.querySelectorAll('#roster tbody tr').forEach(row => {
-            const boy = row.children[1]?.textContent.replace("✏️", "").replace("🗑️", "").trim();
+            const boy = row.children[1]?.textContent.replace("✏️", "").replace("↔️", "").replace("🗑️", "").trim();
             
             if (boy !== '') {
                 boyPlayers.push(boy);
@@ -527,7 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
         girlPlayers = []; // Clear the array to avoid duplicates
 
         document.querySelectorAll('#roster tbody tr').forEach(row => {
-            const girl = row.children[2]?.textContent.replace("✏️", "").replace("🗑️", "").trim();
+            const girl = row.children[2]?.textContent.replace("✏️", "").replace("↔️", "").replace("🗑️", "").trim();
             if (girl !== '') {
                 girlPlayers.push(girl);
             }
@@ -692,7 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Decides to display trash can whether in remove mode or not
         // The edit icon is hidden if either draw button has already been pressed (i.e. boys edits are hidden if boy draw is pressed)
-        document.querySelectorAll(".edit-icon, .delete-icon").forEach(icon => {
+        document.querySelectorAll(".edit-icon, .swap-icon, .delete-icon").forEach(icon => {
             const cell = icon.closest("td"); // Get the parent cell
             if (!cell) return; // Ensure cell exists
         

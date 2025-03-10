@@ -280,6 +280,17 @@ button:hover {
     color: darkgreen;
 }
 
+.swap-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    color: darkblue;
+    font-size: 16px;
+}
+
+.swap-icon:hover {
+    color: darkblue;
+}
+
 /* Scale font on mobile*/
 @media (max-width: 425px) {
     #roster {
