@@ -768,13 +768,13 @@ document.addEventListener("DOMContentLoaded", () => {
             boysDownload.textContent = `Download ${boysHeaderText} Results`;
             girlsDownload.textContent = `Download ${girlsHeaderText} Results`;
             // Ensure the correct button text stays consistent
-            if (boysDrawActivated) {
+            if (boyplayerRemoved && boysDrawActivated) {
                 boysDrawButton.textContent = `Update ${boysHeaderText} Draw`;
             } else {
                 boysDrawButton.textContent = boysDrawButtonText;
             }
 
-            if (girlsDrawActivated) {
+            if (girlplayerRemoved && girlsDrawActivated) {
                 girlsDrawButton.textContent = `Update ${girlsHeaderText} Draw`;
             } else {
                 girlsDrawButton.textContent = girlsDrawButtonText;
