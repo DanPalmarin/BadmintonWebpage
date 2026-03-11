@@ -291,6 +291,18 @@ button:hover {
     color: darkblue;
 }
 
+/* Right-justify icons in edit mode*/
+.roster-name-cell {
+    display: flex;
+    align-items: center;
+}
+
+.roster-icons {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
 /* Scale font on mobile*/
 @media (max-width: 425px) {
     #roster {
