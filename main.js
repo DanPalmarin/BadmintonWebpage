@@ -843,6 +843,63 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    rosterButton.addEventListener("click", () => {
+
+    const proceed = confirm("This will clear the roster and load the 2026 roster. Continue?");
+    if (!proceed) return;
+
+    const boys = [
+        "Nantas",
+        "Kayden",
+        "Garrett",
+        "Stephen",
+        "Lucas",
+        "Ethan",
+        "Ryan",
+        "Rashard",
+        "William",
+        "Nathan",
+        "Jerfen",
+        "Lucky",
+        "Kien",
+        "Rey",
+        "Kyle"
+    ];
+
+    const girls = [
+        "Lyka",
+        "Angela M",
+        "Alex",
+        "Olivia",
+        "Sienna",
+        "Shaylee",
+        "Mary",
+        "Angela B",
+        "Dion",
+        "Anika",
+        "Chloe A",
+        "Meg",
+        "Fin",
+        "Zyna",
+        "Khloe Y"
+    ];
+
+    // Clear current memory arrays
+    boyAttendance = [];
+    girlAttendance = [];
+
+    // Populate arrays
+    boyAttendance.push(...boys);
+    girlAttendance.push(...girls);
+
+    // Rebuild the roster table (use whatever function you normally use)
+    remakeRoster(); 
+
+    // Save to localStorage
+    saveMemory();
+
+});
+
     // Clear attendance button
     attendanceButton.addEventListener("click", () => {
         // Ask for confirmation
