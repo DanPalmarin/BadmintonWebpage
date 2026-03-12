@@ -942,30 +942,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const proceed = confirm("This will clear the table and load the 2026 singles and doubles pairings. Continue?");
     if (!proceed) return;
         const singles = [
-        "Lucas",
-        "Lucky",
-        "Kyle",
-        "Nelson",
-        "Fin",
-        "Zyna",
-        "Anika"
-    ];
+            "Lucas",
+            "Lucky",
+            "Kyle",
+            "Nelson",
+            "Fin",
+            "Zyna",
+            "Anika"
+        ];
 
-    const doubles = [
-        "Nantas/Lyka",
-        "Alex/Angela M",
-        "Olivia/Sienna",
-        "Shaylee/Angela B",
-        "Nathan/Mary",
-        "Chloe/Khloe",
-        "Meg/Dion",
-        "Garrett/Stephen",
-        "Rey/Ryan",
-        "Kien/Rashard",
-        "Kayden/William",
-        "Ethan/Jerfen",
-        "Coaches"
-    ];
+        const doubles = [
+            "Nantas/Lyka",
+            "Alex/Angela M",
+            "Olivia/Sienna",
+            "Shaylee/Angela B",
+            "Nathan/Mary",
+            "Chloe/Khloe",
+            "Meg/Dion",
+            "Garrett/Stephen",
+            "Rey/Ryan",
+            "Kien/Rashard",
+            "Kayden/William",
+            "Ethan/Jerfen",
+            "Coaches"
+        ];
     // const boys = [
     //     "Nantas",
     //     "Kayden",
@@ -1009,6 +1009,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Populate arrays
     boyAttendance.push(...singles);
     girlAttendance.push(...doubles);
+
+    // Change all headings, buttons, and labels to be Singles and Doubles
+    boysHeaderText = "Singles";
+    girlsHeaderText = "Doubles";
+
+    document.querySelector("#roster thead th:nth-child(2)").textContent = boysHeaderText;
+    document.querySelector("#roster thead th:nth-child(3)").textContent = girlsHeaderText;
+
+    document.getElementById("boyLabel").textContent = boysHeaderText;
+    document.getElementById("girlLabel").textContent = girlsHeaderText;
+
+    document.querySelector('.tab-button[data-tab="boys-draw"]').textContent = boysHeaderText;
+    document.querySelector('.tab-button[data-tab="girls-draw"]').textContent = girlsHeaderText;
+
+    document.getElementById("boysDownloadButton").textContent = `Download ${boysHeaderText} Results`;
+    document.getElementById("girlsDownloadButton").textContent = `Download ${girlsHeaderText} Results`;
+
+    document.getElementById("boysDrawButton").textContent = `Make ${boysHeaderText} Draw`;
+    document.getElementById("girlsDrawButton").textContent = `Make ${girlsHeaderText} Draw`;
 
     // Rebuild the roster table
     remakeRoster(); 
