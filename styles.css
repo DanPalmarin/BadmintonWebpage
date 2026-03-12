@@ -436,7 +436,7 @@ th {
     height: 100%; /* Ensure it's at least as tall as the content */
 }
 
-.score-container {
+.scores-container {
     justify-content: center;
     align-items: center;
     padding: 0px;
@@ -477,4 +477,28 @@ th {
     display: inline-block;
     width: 10px;
     text-align: center;
+}
+
+/* Allow match buttons to stack on small screens */
+#boysdraw td:nth-child(2),
+#girlsdraw td:nth-child(2) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Prevent scores column from wrapping */
+#boysdraw td:nth-child(3),
+#girlsdraw td:nth-child(3) {
+    white-space: nowrap;
+}
+
+/* Optional: force stacking on very small screens */
+@media (max-width: 400px) {
+    #boysdraw td:nth-child(2),
+    #girlsdraw td:nth-child(2) {
+        flex-direction: column;
+        align-items: center;
+    }
 }
