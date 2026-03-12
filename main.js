@@ -939,52 +939,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
     rosterButton.addEventListener("click", () => {
 
-    const proceed = confirm("This will clear the roster and load the 2026 roster. Continue?");
+    const proceed = confirm("This will clear the table and load the 2026 singles and doubles pairings. Continue?");
     if (!proceed) return;
-
-    const boys = [
-        "Nantas",
-        "Kayden",
-        "Garrett",
-        "Stephen",
+        const singles = [
         "Lucas",
-        "Ethan",
-        "Ryan",
-        "Rashard",
-        "William",
-        "Nathan",
-        "Jerfen",
         "Lucky",
-        "Kien",
-        "Rey",
-        "Kyle"
-    ];
-
-    const girls = [
-        "Lyka",
-        "Angela M",
-        "Alex",
-        "Olivia",
-        "Sienna",
-        "Shaylee",
-        "Mary",
-        "Angela B",
-        "Dion",
-        "Anika",
-        "Chloe A",
-        "Meg",
+        "Kyle",
+        "Nelson",
         "Fin",
         "Zyna",
-        "Khloe Y"
+        "Anika"
     ];
+
+    const doubles = [
+        "Nantas/Lyka",
+        "Alex/Angela M",
+        "Olivia/Sienna",
+        "Shaylee/Angela B",
+        "Nathan/Mary",
+        "Chloe/Khloe",
+        "Meg/Dion",
+        "Garrett/Stephen",
+        "Rey/Ryan",
+        "Kien/Rashard",
+        "Kayden/William",
+        "Ethan/Jerfen",
+        "Coaches"
+    ];
+    // const boys = [
+    //     "Nantas",
+    //     "Kayden",
+    //     "Garrett",
+    //     "Stephen",
+    //     "Lucas",
+    //     "Ethan",
+    //     "Ryan",
+    //     "Rashard",
+    //     "William",
+    //     "Nathan",
+    //     "Jerfen",
+    //     "Lucky",
+    //     "Kien",
+    //     "Rey",
+    //     "Kyle"
+    // ];
+
+    // const girls = [
+    //     "Lyka",
+    //     "Angela M",
+    //     "Alex",
+    //     "Olivia",
+    //     "Sienna",
+    //     "Shaylee",
+    //     "Mary",
+    //     "Angela B",
+    //     "Dion",
+    //     "Anika",
+    //     "Chloe A",
+    //     "Meg",
+    //     "Fin",
+    //     "Zyna",
+    //     "Khloe Y"
+    // ];
 
     // Clear current memory arrays
     boyAttendance = [];
     girlAttendance = [];
 
     // Populate arrays
-    boyAttendance.push(...boys);
-    girlAttendance.push(...girls);
+    boyAttendance.push(...singles);
+    girlAttendance.push(...doubles);
 
     // Rebuild the roster table
     remakeRoster(); 
