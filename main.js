@@ -948,7 +948,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "Nelson",
             "Fin",
             "Zyna",
-            "Anika"
+            "Anika",
+            "Dion",
+            "Chloe A"
         ];
 
         const doubles = [
@@ -957,13 +959,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "Olivia/Sienna",
             "Shaylee/Angela B",
             "Nathan/Mary",
-            "Chloe/Khloe",
-            "Meg/Dion",
+            "Meg/Khloe Y",
             "Garrett/Stephen",
             "Rey/Ryan",
-            "Kien/Rashard",
+            "Jerfen/Rashard",
             "Kayden/William",
-            "Ethan/Jerfen",
+            "Ethan/Kien",
             "Coaches"
         ];
     // const boys = [
