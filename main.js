@@ -939,7 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     rosterButton.addEventListener("click", () => {
 
-    const proceed = confirm("This will clear the table and load the 2026 singles and doubles pairings. Continue?");
+    const proceed = confirm("Load 2026 singles and doubles (shuffled)? This will clear the table.");
     if (!proceed) return;
         const singles = [
             "Lucas",
@@ -950,7 +950,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Zyna",
             "Anika",
             "Dion",
-            "Chloe A"
+            "Meg"
         ];
 
         const doubles = [
@@ -959,14 +959,19 @@ document.addEventListener("DOMContentLoaded", () => {
             "Olivia/Sienna",
             "Shaylee/Angela B",
             "Nathan/Mary",
-            "Meg/Khloe Y",
-            "Garrett/Stephen",
+            "Chloe A/Khloe Y",
+            "Garrett/Ethan",
             "Rey/Ryan",
-            "Jerfen/Rashard",
+            "Stephen/Rashard",
             "Kayden/William",
-            "Ethan/Kien",
+            "Jerfen/Kien",
             "Coaches"
         ];
+
+        // Shuffle the lists before populating the table
+        // This keeps the practice draws fresh every day
+        singles.sort(() => Math.random() - 0.5);
+        doubles.sort(() => Math.random() - 0.5);
     // const boys = [
     //     "Nantas",
     //     "Kayden",
@@ -1041,7 +1046,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear attendance button
     attendanceButton.addEventListener("click", () => {
         // Ask for confirmation
-        const confirmation = confirm("This clears all attendance. Are you sure you wish to proceed? ");
+        const confirmation = confirm("This clears all attendance. Are you sure you wish to proceed?");
 
         if (!confirmation) return;
 
@@ -1062,7 +1067,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Clear draws button
     resetButton.addEventListener("click", () => {
         // Ask for confirmation
-        const confirmation = confirm("This clears all data and memory! Are you sure you want to reset and erase everything? ");
+        const confirmation = confirm("This clears all data and memory! Are you sure you want to reset and erase everything?");
 
         if (!confirmation) return;
 
