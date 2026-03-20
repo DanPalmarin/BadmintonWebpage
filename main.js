@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!proceed) return;
         const singles = [
             "Lucas",
-            "Lucky",
+            "William",
             "Kyle",
             "Nelson",
             "Fin",
@@ -963,7 +963,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Garrett/Ethan",
             "Rey/Ryan",
             "Stephen/Rashard",
-            "Kayden/William",
+            "Kayden/Lucky",
             "Jerfen/Kien",
             "Coaches"
         ];
