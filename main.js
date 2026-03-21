@@ -527,67 +527,73 @@ function remakeRoster() {
         numberCell.textContent = i+1;
         newRow.appendChild(numberCell);
 
-        const boyCell = document.createElement('td');
-
-        const boyName = boyAttendance[i] || "";
-
-        if (boyName !== "") {
-
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("roster-name-cell");
-
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = boyName;
-
-            const iconBox = document.createElement("span");
-            iconBox.classList.add("roster-icons");
-            iconBox.appendChild(createDeleteIcon(boyCell));
-
-            wrapper.appendChild(nameSpan);
-            wrapper.appendChild(iconBox);
-
-            boyCell.appendChild(wrapper);
-        }
-
-        newRow.appendChild(boyCell);
-
+        // --------------- Right-aligned icons ----------------
         // const boyCell = document.createElement('td');
-        // boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
-        // if (boyCell.textContent !== "") {  // Check if name is not empty
-        //     boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
-        // }
-        // newRow.appendChild(boyCell);
+
+        // const boyName = boyAttendance[i] || "";
         
-        const girlCell = document.createElement('td');
+        // if (boyName !== "") {
 
-        const girlName = girlAttendance[i] || "";
+        //     const wrapper = document.createElement("div");
+        //     wrapper.classList.add("roster-name-cell");
 
-        if (girlName !== "") {
+        //     const nameSpan = document.createElement("span");
+        //     nameSpan.textContent = boyName;
 
-            const wrapper = document.createElement("div");
-            wrapper.classList.add("roster-name-cell");
+        //     const iconBox = document.createElement("span");
+        //     iconBox.classList.add("roster-icons");
+        //     iconBox.appendChild(createDeleteIcon(boyCell));
 
-            const nameSpan = document.createElement("span");
-            nameSpan.textContent = girlName;
+        //     wrapper.appendChild(nameSpan);
+        //     wrapper.appendChild(iconBox);
 
-            const iconBox = document.createElement("span");
-            iconBox.classList.add("roster-icons");
-            iconBox.appendChild(createDeleteIcon(girlCell));
-
-            wrapper.appendChild(nameSpan);
-            wrapper.appendChild(iconBox);
-
-            girlCell.appendChild(wrapper);
-        }
-
-        newRow.appendChild(girlCell);
-
-        // const girlCell = document.createElement('td');
-        // girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
-        // if (girlCell.textContent !== "") {  // Check if name is not empty
-        //     girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
+        //     boyCell.appendChild(wrapper);
         // }
+
+        // newRow.appendChild(boyCell);
+        // ------------------------------------------------
+
+        const boyCell = document.createElement('td');
+        boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
+        if (boyCell.textContent !== "") {  // Check if name is not empty
+            boyCell.appendChild(document.createElement("br"));
+            boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
+        }
+        newRow.appendChild(boyCell);
+        
+        // --------------- Right-aligned icons ----------------
+        // const girlCell = document.createElement('td');
+
+        // const girlName = girlAttendance[i] || "";
+
+        // if (girlName !== "") {
+
+        //     const wrapper = document.createElement("div");
+        //     wrapper.classList.add("roster-name-cell");
+
+        //     const nameSpan = document.createElement("span");
+        //     nameSpan.textContent = girlName;
+
+        //     const iconBox = document.createElement("span");
+        //     iconBox.classList.add("roster-icons");
+        //     iconBox.appendChild(createDeleteIcon(girlCell));
+
+        //     wrapper.appendChild(nameSpan);
+        //     wrapper.appendChild(iconBox);
+
+        //     girlCell.appendChild(wrapper);
+        // }
+
         // newRow.appendChild(girlCell);
+        // ------------------------------------------------
+
+        const girlCell = document.createElement('td');
+        girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
+        if (girlCell.textContent !== "") {  // Check if name is not empty
+            girlCell.appendChild(document.createElement("br"));
+            girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
+        }
+        newRow.appendChild(girlCell);
 
         tbody.appendChild(newRow);
     }
@@ -711,23 +717,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const cell = row.children[columnIndex];
             if (cell && cell.textContent.trim() === "") {
                 // Fill the first empty cell with the entered text
-                const wrapper = document.createElement("div");
-                wrapper.classList.add("roster-name-cell");
+                
+                // ---------------- Right-aligned icons ----------------
+                // const wrapper = document.createElement("div");
+                // wrapper.classList.add("roster-name-cell");
 
-                const nameSpan = document.createElement("span");
-                nameSpan.textContent = enteredText;
+                // const nameSpan = document.createElement("span");
+                // nameSpan.textContent = enteredText;
 
-                const iconBox = document.createElement("span");
-                iconBox.classList.add("roster-icons");
-                iconBox.appendChild(createDeleteIcon(cell));
+                // const iconBox = document.createElement("span");
+                // iconBox.classList.add("roster-icons");
+                // iconBox.appendChild(createDeleteIcon(cell));
 
-                wrapper.appendChild(nameSpan);
-                wrapper.appendChild(iconBox);
+                // wrapper.appendChild(nameSpan);
+                // wrapper.appendChild(iconBox);
 
-                cell.appendChild(wrapper);
+                // cell.appendChild(wrapper);
+                // ------------------------------------------------------
 
-                //cell.textContent = enteredText;
-                //cell.appendChild(createDeleteIcon(cell)); // Attach trash icon
+                cell.textContent = enteredText;
+                cell.appendChild(document.createElement("br"));
+                cell.appendChild(createDeleteIcon(cell)); // Attach trash icon
                 emptyCellFound = true;
                 break; // Stop checking further rows
             }
@@ -750,41 +760,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
             newRow.appendChild(numberCell);
             if (selectedGender === "Boys") {
-                const wrapper = document.createElement("div");
-                wrapper.classList.add("roster-name-cell");
 
-                const nameSpan = document.createElement("span");
-                nameSpan.textContent = enteredText;
+                // ---------------- Right-aligned icons ----------------
+                // const wrapper = document.createElement("div");
+                // wrapper.classList.add("roster-name-cell");
 
-                const iconBox = document.createElement("span");
-                iconBox.classList.add("roster-icons");
-                iconBox.appendChild(createDeleteIcon(boyCell));
+                // const nameSpan = document.createElement("span");
+                // nameSpan.textContent = enteredText;
 
-                wrapper.appendChild(nameSpan);
-                wrapper.appendChild(iconBox);
+                // const iconBox = document.createElement("span");
+                // iconBox.classList.add("roster-icons");
+                // iconBox.appendChild(createDeleteIcon(boyCell));
 
-                boyCell.appendChild(wrapper);
-                //boyCell.textContent = enteredText;
-                //boyCell.appendChild(createDeleteIcon(boyCell)); // Attach edit and trash icons
+                // wrapper.appendChild(nameSpan);
+                // wrapper.appendChild(iconBox);
+
+                // boyCell.appendChild(wrapper);
+                // ------------------------------------------------------
+
+                boyCell.textContent = enteredText;
+                cell.appendChild(document.createElement("br"));
+                boyCell.appendChild(createDeleteIcon(boyCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Append to the row
                 newRow.appendChild(girlCell); // Empty girl cell
             } else if (selectedGender === "Girls") {
-                const wrapper = document.createElement("div");
-                wrapper.classList.add("roster-name-cell");
 
-                const nameSpan = document.createElement("span");
-                nameSpan.textContent = enteredText;
+                // ---------------- Right-aligned icons ----------------
+                // const wrapper = document.createElement("div");
+                // wrapper.classList.add("roster-name-cell");
 
-                const iconBox = document.createElement("span");
-                iconBox.classList.add("roster-icons");
-                iconBox.appendChild(createDeleteIcon(girlCell));
+                // const nameSpan = document.createElement("span");
+                // nameSpan.textContent = enteredText;
 
-                wrapper.appendChild(nameSpan);
-                wrapper.appendChild(iconBox);
+                // const iconBox = document.createElement("span");
+                // iconBox.classList.add("roster-icons");
+                // iconBox.appendChild(createDeleteIcon(girlCell));
 
-                girlCell.appendChild(wrapper);
-                //girlCell.textContent = enteredText;
-                //girlCell.appendChild(createDeleteIcon(girlCell)); // Attach edit and trash icons
+                // wrapper.appendChild(nameSpan);
+                // wrapper.appendChild(iconBox);
+
+                // girlCell.appendChild(wrapper);
+                // ------------------------------------------------------
+
+                girlCell.textContent = enteredText;
+                cell.appendChild(document.createElement("br"));
+                girlCell.appendChild(createDeleteIcon(girlCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Empty boy cell
                 newRow.appendChild(girlCell); // Append to the row
             }
