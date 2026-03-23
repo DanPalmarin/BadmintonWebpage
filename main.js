@@ -88,16 +88,14 @@ function generateDraw(players, memory, key, tableBodyId) {
             isLongPress = false;
 
             pressTimer = setTimeout(() => {
-                isLongPress = true;
+            isLongPress = true;
 
-                // Long press → gray row
-                row.classList.toggle("row-gray");
-                
-                // ✅ SAVE STATE HERE
-                memory[index]["archived"] = row.classList.contains("row-gray");
-                saveToStorage(memory, key);
+            game.archived = !game.archived;
 
-            }, LONG_PRESS_DURATION);
+            setArchivedState();
+            saveToStorage(memory, key);
+
+        }, LONG_PRESS_DURATION);
         });
 
         gameButton.addEventListener("pointerup", () => {
@@ -105,7 +103,9 @@ function generateDraw(players, memory, key, tableBodyId) {
 
             if (isLongPress) return;
 
-            // Short click → red button (existing logic)
+            // ✅ BLOCK clicks if archived
+            if (game.archived) return;
+
             const isSelected = gameButton.classList.contains("selected");
 
             if (isSelected) {
@@ -241,6 +241,21 @@ function generateDraw(players, memory, key, tableBodyId) {
         scoresContainer.appendChild(scoreInput2);
         scoresCell.appendChild(scoresContainer);
         row.appendChild(scoresCell);
+
+        // ✅ PUT IT RIGHT HERE
+        const setArchivedState = () => {
+            const isArchived = game.archived;
+
+            row.classList.toggle("row-gray", isArchived);
+
+            player1Button.disabled = isArchived;
+            player2Button.disabled = isArchived;
+            scoreInput1.disabled = isArchived;
+            scoreInput2.disabled = isArchived;
+        };
+
+        // ✅ Apply it immediately on load
+        setArchivedState();
 
         // ADD ROW TO TABLE
         tableBody.appendChild(row);

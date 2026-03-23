@@ -417,7 +417,7 @@ th {
     background-color: #bcbcbc;
 }
 
-.row-gray button {
+.row-gray .game-button {
     opacity: 0.6;
 }
 
