@@ -397,9 +397,28 @@ th {
     border-radius: 0;
  }
 
+ /* This stops long-press UI like text selection / touch callout */
+.game-button {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+ .game-button:active {
+    transform: scale(0.95);
+}
+
  .game-button.selected {
     background-color: #FF7043; /* Coral */
     color: white;
+}
+
+.row-gray {
+    background-color: #bcbcbc;
+}
+
+.row-gray button {
+    opacity: 0.6;
 }
 
  .winner-button {

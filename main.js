@@ -20,7 +20,8 @@ function generateDraw(players, memory, key, tableBodyId) {
                 "players": [player1, player2],
                 "winner": null,
                 "score": [null, null],
-                "completed": false
+                "completed": false,
+                "archived": false // NEW: property to track gray state ✅
             };
         }
     });
@@ -56,11 +57,57 @@ function generateDraw(players, memory, key, tableBodyId) {
             gameButton.classList.remove("selected");
         }
 
-        // EVENT: Add click event to toggle if the game is completed or not
-        gameButton.addEventListener("click", () => {
-            const isSelected = gameButton.classList.contains("selected"); // Get current state of button
+        // ✅ RESTORE GRAY STATE
+        if (game.archived) {
+            row.classList.add("row-gray");
+        }
+        // -------------- OLD EVENT: Binary toggle -----------------
+        // // EVENT: Add click event to toggle if the game is completed or not
+        // gameButton.addEventListener("click", () => {
+        //     const isSelected = gameButton.classList.contains("selected"); // Get current state of button
             
-            // When the user clicks the button, we need to set the opposite state of the current
+        //     // When the user clicks the button, we need to set the opposite state of the current
+        //     if (isSelected) {
+        //         gameButton.classList.remove("selected");
+        //         memory[index]["completed"] = false;
+        //     } else {
+        //         gameButton.classList.add("selected");
+        //         memory[index]["completed"] = true;
+        //     }
+        
+        //     saveToStorage(memory, key);
+        // });
+        // -------------------------------------------------------
+
+        // ------ ✅ NEW EVENT: Short click vs long press --------
+        let pressTimer;
+        let isLongPress = false;
+        const LONG_PRESS_DURATION = 600;
+
+        gameButton.addEventListener("pointerdown", () => {
+            isLongPress = false;
+
+            pressTimer = setTimeout(() => {
+                isLongPress = true;
+
+                // Long press → gray row
+                row.classList.toggle("row-gray");
+                
+                // ✅ SAVE STATE HERE
+                memory[index]["archived"] = row.classList.contains("row-gray");
+                saveToStorage(memory, key);
+
+            }, LONG_PRESS_DURATION);
+        });
+
+        gameButton.addEventListener("pointerup", () => {
+            clearTimeout(pressTimer);
+
+            if (isLongPress) return;
+
+            // Short click → red button (existing logic)
+            const isSelected = gameButton.classList.contains("selected");
+
             if (isSelected) {
                 gameButton.classList.remove("selected");
                 memory[index]["completed"] = false;
@@ -68,10 +115,19 @@ function generateDraw(players, memory, key, tableBodyId) {
                 gameButton.classList.add("selected");
                 memory[index]["completed"] = true;
             }
-        
+
             saveToStorage(memory, key);
         });
-        
+
+        gameButton.addEventListener("pointerleave", () => {
+            clearTimeout(pressTimer);
+        });
+
+        gameButton.addEventListener("pointercancel", () => {
+            clearTimeout(pressTimer);
+        });
+        // -------------------------------------------------------
+
         gameCell.appendChild(gameButton)
         row.appendChild(gameCell);
 
@@ -620,6 +676,14 @@ let girlsDrawButtonText = `Make ${girlsHeaderText} Draw`;
 
 // After the DOM is loaded, we content all event listeners and pull from LocalStorage
 document.addEventListener("DOMContentLoaded", () => {
+
+    // ✅ Prevent long-press context menu on game buttons
+    document.addEventListener("contextmenu", (e) => {
+        if (e.target.closest(".game-button")) {
+            e.preventDefault();
+        }
+    });
+
     // --- EVENT LISTENERS ---
 
     // Make Boys Draw button
