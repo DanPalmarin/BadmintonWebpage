@@ -482,42 +482,99 @@ function createDeleteIcon(cell) {
             return;
         }
 
-        // Check if a draw has been made (by checking the activated state of the draw buttons)
+        //  ✅ALWAYS update attendance arrays (this is the source of truth for the roster)
+        if (isBoy) {
+            const playerIndex = boyAttendance.indexOf(oldName);
+            boyAttendance[playerIndex] = newName;
+        } else if (isGirl) {
+            const playerIndex = girlAttendance.indexOf(oldName);
+            girlAttendance[playerIndex] = newName;
+        }
+
+        //  ✅ONLY update draw memory if a draw has already been created
+        // (memory is derived from attendance, so we don't touch it unless it exists)
         if (boysDrawActivated || girlsDrawActivated) {
-            // Update memory only if a draw has been made
+
+            // Update boys draw memory
             if (isBoy) {
-                const playerIndex = boyAttendance.indexOf(oldName);
-                boyAttendance[playerIndex] = newName;
-                // Update the corresponding entry in boysMemory
                 boysMemory.forEach(game => {
+
+                    // Update player names inside each game
                     if (game.players.includes(oldName)) {
                         game.players[game.players.indexOf(oldName)] = newName;
                     }
-                    // Swap winner if necessary
+
+                    // If the edited player was marked as winner, update that too
                     if (game.winner === oldName) {
                         game.winner = newName;
                     }
                 });
+
+                // Flag that a structural change happened (used to trigger "Update Draw")
                 boyplayerRemoved = true;
-            } else if (isGirl) {
-                const playerIndex = girlAttendance.indexOf(oldName);
-                girlAttendance[playerIndex] = newName;
-                // Update the corresponding entry in girlsMemory
+            } 
+            
+            // Update girls draw memory
+            else if (isGirl) {
                 girlsMemory.forEach(game => {
+
+                    // Update player names inside each game
                     if (game.players.includes(oldName)) {
                         game.players[game.players.indexOf(oldName)] = newName;
                     }
-                    // Swap winner if necessary
+
+                    // Preserve winner consistency
                     if (game.winner === oldName) {
                         game.winner = newName;
                     }
                 });
+
+                // Flag that a structural change happened
                 girlplayerRemoved = true;
             }
-            
-            // Save memory after modification
-            saveMemory();
         }
+
+        //  ✅Persist everything after both attendance + memory are in sync
+        saveMemory();
+
+        // Check if a draw has been made (by checking the activated state of the draw buttons)
+
+        // OLD: Known bug when going singles/doubles button -> edit -> delete (reverts back to OG players)
+        // if (boysDrawActivated || girlsDrawActivated) {
+        //     // Update memory only if a draw has been made
+        //     if (isBoy) {
+        //         const playerIndex = boyAttendance.indexOf(oldName);
+        //         boyAttendance[playerIndex] = newName;
+        //         // Update the corresponding entry in boysMemory
+        //         boysMemory.forEach(game => {
+        //             if (game.players.includes(oldName)) {
+        //                 game.players[game.players.indexOf(oldName)] = newName;
+        //             }
+        //             // Swap winner if necessary
+        //             if (game.winner === oldName) {
+        //                 game.winner = newName;
+        //             }
+        //         });
+        //         boyplayerRemoved = true;
+        //     } else if (isGirl) {
+        //         const playerIndex = girlAttendance.indexOf(oldName);
+        //         girlAttendance[playerIndex] = newName;
+        //         // Update the corresponding entry in girlsMemory
+        //         girlsMemory.forEach(game => {
+        //             if (game.players.includes(oldName)) {
+        //                 game.players[game.players.indexOf(oldName)] = newName;
+        //             }
+        //             // Swap winner if necessary
+        //             if (game.winner === oldName) {
+        //                 game.winner = newName;
+        //             }
+        //         });
+        //         girlplayerRemoved = true;
+        //     }
+            // -------------------------------------------------------
+            // Save memory after modification
+            // saveMemory();
+        // }
 
         // Update the name in the table
         cell.textContent = newName;

@@ -1,0 +1,6 @@
+- Add roster using Singles/Doubles
+- Edit name
+- Delete someone
+- Then original name will come back (not the edited one)
+
+- Consider adding a shuffle button
