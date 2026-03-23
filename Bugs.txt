@@ -5,7 +5,3 @@ Bug1 - Mar 23
 - Then original name will come back (not the edited one)
 
 Bug1 - FIXED (Mar 23)
-
-
-
-- Consider adding a shuffle button
