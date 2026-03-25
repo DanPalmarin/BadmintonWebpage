@@ -684,7 +684,7 @@ function remakeRoster() {
         const boyCell = document.createElement('td');
         boyCell.textContent = boyAttendance[i] || "";  // Fallback to empty if no boy at this index
         if (boyCell.textContent !== "") {  // Check if name is not empty
-            boyCell.appendChild(document.createElement("br"));
+            // boyCell.appendChild(document.createElement("br"));
             boyCell.appendChild(createDeleteIcon(boyCell));  // Attach trash icon only if name is not empty
         }
         newRow.appendChild(boyCell);
@@ -718,7 +718,7 @@ function remakeRoster() {
         const girlCell = document.createElement('td');
         girlCell.textContent = girlAttendance[i] || "";  // Fallback to empty if no girl at this index
         if (girlCell.textContent !== "") {  // Check if name is not empty
-            girlCell.appendChild(document.createElement("br"));
+            // girlCell.appendChild(document.createElement("br"));
             girlCell.appendChild(createDeleteIcon(girlCell));  // Attach trash icon only if name is not empty
         }
         newRow.appendChild(girlCell);
@@ -847,7 +847,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Check for an empty cell in the appropriate column
         let emptyCellFound = false;
-        const rows = roster.querySelectorAll("tr");
+        const rows = roster.querySelectorAll("tbody tr");
 
         for (const row of rows) {
             const cell = row.children[columnIndex];
@@ -872,7 +872,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // ------------------------------------------------------
 
                 cell.textContent = enteredText;
-                cell.appendChild(document.createElement("br"));
+                // cell.appendChild(document.createElement("br"));
                 cell.appendChild(createDeleteIcon(cell)); // Attach trash icon
                 emptyCellFound = true;
                 break; // Stop checking further rows
@@ -915,7 +915,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // ------------------------------------------------------
 
                 boyCell.textContent = enteredText;
-                cell.appendChild(document.createElement("br"));
+                // cell.appendChild(document.createElement("br"));
                 boyCell.appendChild(createDeleteIcon(boyCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Append to the row
                 newRow.appendChild(girlCell); // Empty girl cell
@@ -939,7 +939,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 // ------------------------------------------------------
 
                 girlCell.textContent = enteredText;
-                cell.appendChild(document.createElement("br"));
+                // cell.appendChild(document.createElement("br"));
                 girlCell.appendChild(createDeleteIcon(girlCell)); // Attach edit and trash icons
                 newRow.appendChild(boyCell); // Empty boy cell
                 newRow.appendChild(girlCell); // Append to the row
